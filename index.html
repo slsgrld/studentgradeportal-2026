@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Grade Portal</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sora', sans-serif; }
+    .heading-font { font-family: 'Outfit', sans-serif; }
+    .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .dropdown-content.open { max-height: 600px; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full bg-slate-50 overflow-auto">
+   <div class="max-w-2xl mx-auto px-4 py-10"><!-- Header -->
+    <div class="text-center mb-8">
+     <h1 id="portalTitle" class="heading-font text-3xl md:text-4xl text-slate-800 mb-2">Student Grade Portal</h1>
+     <p class="text-slate-500 text-sm">Check your academic performance and grades</p>
+    </div><!-- Search -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"><label for="studentInput" class="block text-sm font-medium text-slate-700 mb-2">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 mb-4">
+     <div class="flex gap-3"><button onclick="handleSubmit()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 text-sm rounded-lg transition" title="Enter your Student Number to view your grades">Submit</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-4 text-sm rounded-lg transition">Reset</button>
+     </div>
+    </div><!-- Results -->
+    <div id="results"></div><!-- Gnomio Note -->
+    <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+     <div class="flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+      <p>Detailed breakdowns of specific activity scores, quiz scores, examination scores, and assignment scores are available on our learning platform, <strong>Gnomio</strong>. Please check Gnomio for more comprehensive information.</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+// Student Data
+const students = [
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202406027",name:"Alegre, Michaella",midterm:{studentship:9.7,activities:19.8,recitation:14.1,quizzes:21,exam:25.2,average:89.8,grade:2},final:{studentship:9.7,activities:16.82,recitation:14.18,quizzes:22.19,exam:28.5,average:91.38,grade:1.9},finalGradeAverage:90.59,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400036",name:"Almirañez, Trixie Nicole",midterm:{studentship:9.2,activities:19.6,recitation:14.1,quizzes:20.58,exam:24.6,average:88.08,grade:2.2},final:{studentship:9.7,activities:17.75,recitation:14.18,quizzes:22.88,exam:29.1,average:93.6,grade:1.6},finalGradeAverage:90.84,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400114",name:"Balmeo, Angel Sharine",midterm:{studentship:9.7,activities:19.2,recitation:14.1,quizzes:21.08,exam:25.2,average:89.28,grade:2.1},final:{studentship:9.7,activities:17.83,recitation:14.18,quizzes:21.69,exam:27.3,average:90.69,grade:1.9},finalGradeAverage:89.99,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401852",name:"Baluyut, Newler",midterm:{studentship:9.6,activities:18.4,recitation:13.8,quizzes:21.42,exam:25.5,average:88.72,grade:2.1},final:{studentship:9.6,activities:18.06,recitation:13.95,quizzes:18.56,exam:21.9,average:82.07,grade:2.7},finalGradeAverage:85.39,finalGradeEquivalent:2.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401931",name:"Briones, Louise Jade",midterm:{studentship:8.2,activities:19.8,recitation:12.6,quizzes:23.17,exam:27.9,average:91.67,grade:1.8},final:{studentship:9.2,activities:18.83,recitation:12.53,quizzes:22.25,exam:28.2,average:91.01,grade:1.9},finalGradeAverage:91.34,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400098",name:"Calma, Renz",midterm:{studentship:9.2,activities:19.6,recitation:14.1,quizzes:24.25,exam:29.1,average:96.25,grade:1.4},final:{studentship:9.7,activities:18.52,recitation:14.25,quizzes:23.19,exam:29.1,average:94.76,grade:1.5},finalGradeAverage:95.51,finalGradeEquivalent:1.4,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401849",name:"Canlas, Ralph Laurence",midterm:{studentship:8.5,activities:16.4,recitation:12,quizzes:19.17,exam:22.5,average:78.57,grade:2.8},final:{studentship:9,activities:18.14,recitation:12,quizzes:22.44,exam:28.5,average:90.07,grade:2},finalGradeAverage:84.32,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400185",name:"Dimacali, Trissha",midterm:{studentship:8.8,activities:19.4,recitation:14.4,quizzes:22.83,exam:27.3,average:92.73,grade:1.7},final:{studentship:9.8,activities:18.76,recitation:14.63,quizzes:23.75,exam:29.4,average:96.33,grade:1.4},finalGradeAverage:94.53,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202402824",name:"Enriquez, Jhylliam Khyle Winter",midterm:{studentship:9.7,activities:19.4,recitation:14.4,quizzes:23.17,exam:27.9,average:94.57,grade:1.5},final:{studentship:9.7,activities:18.06,recitation:14.4,quizzes:22.94,exam:29.1,average:94.2,grade:1.6},finalGradeAverage:94.38,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401874",name:"Estrabillo, Marygain",midterm:{studentship:9.3,activities:19.6,recitation:14.4,quizzes:21.83,exam:26.1,average:91.23,grade:1.9},final:{studentship:9.8,activities:18.99,recitation:14.55,quizzes:23,exam:29.1,average:95.44,grade:1.5},finalGradeAverage:93.34,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400119",name:"Ganancial, Jana Jadine",midterm:{studentship:8.6,activities:19.8,recitation:13.8,quizzes:21.83,exam:26.1,average:90.13,grade:2},final:{studentship:9.1,activities:18.02,recitation:12.98,quizzes:21.81,exam:27.9,average:89.81,grade:2},finalGradeAverage:89.97,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202406241",name:"Hernandez, Mark Anthony",midterm:{studentship:8.7,activities:19.2,recitation:12.6,quizzes:21.5,exam:25.8,average:87.8,grade:2.3},final:{studentship:9.2,activities:17.2,recitation:12.45,quizzes:20.19,exam:25.5,average:84.54,grade:2.6},finalGradeAverage:86.17,finalGradeEquivalent:2.4,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400110",name:"Jacla, Dylan Brix",midterm:{studentship:8.7,activities:19.8,recitation:14.1,quizzes:23.42,exam:28.2,average:94.22,grade:1.6},final:{studentship:9.7,activities:18.6,recitation:14.25,quizzes:22.31,exam:28.2,average:93.06,grade:1.7},finalGradeAverage:93.64,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400106",name:"Lacsamana, Izza Franzene",midterm:{studentship:9.2,activities:18.6,recitation:14.1,quizzes:21.58,exam:25.8,average:89.28,grade:2.1},final:{studentship:9.7,activities:17.9,recitation:14.18,quizzes:22.75,exam:28.8,average:93.33,grade:1.7},finalGradeAverage:91.31,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401842",name:"Lapuag, Rhain",midterm:{studentship:9.2,activities:19.8,recitation:14.1,quizzes:20.92,exam:25.2,average:89.22,grade:2.1},final:{studentship:9.7,activities:18.37,recitation:14.25,quizzes:22.94,exam:29.1,average:94.36,grade:1.6},finalGradeAverage:91.79,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400104",name:"Macabanti, Trisha Mae",midterm:{studentship:9.2,activities:19,recitation:14.1,quizzes:23.08,exam:27.6,average:92.98,grade:1.8},final:{studentship:9.7,activities:18.37,recitation:14.18,quizzes:22.56,exam:28.8,average:93.61,grade:1.7},finalGradeAverage:93.29,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400080",name:"Mallari, Alliah",midterm:{studentship:9.2,activities:20,recitation:14.1,quizzes:23,exam:27.6,average:93.9,grade:1.7},final:{studentship:9.7,activities:18.52,recitation:14.18,quizzes:22.94,exam:29.1,average:94.44,grade:1.6},finalGradeAverage:94.17,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202402631",name:"Mesa, Shean Kenneth Lee",midterm:{studentship:9.5,activities:19.6,recitation:14.4,quizzes:24.17,exam:28.8,average:96.47,grade:1.4},final:{studentship:9.5,activities:18.21,recitation:13.95,quizzes:22.44,exam:28.2,average:92.3,grade:1.8},finalGradeAverage:94.38,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400038",name:"Miclat, Matthew",midterm:{studentship:8.7,activities:19.6,recitation:14.1,quizzes:22.25,exam:26.7,average:91.35,grade:1.9},final:{studentship:9.7,activities:17.59,recitation:14.25,quizzes:19.75,exam:24,average:85.29,grade:2.5},finalGradeAverage:88.32,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400128",name:"Narciso, Christelle",midterm:{studentship:9.2,activities:19.4,recitation:14.1,quizzes:20.25,exam:24.3,average:87.25,grade:2.3},final:{studentship:9.7,activities:17.51,recitation:14.18,quizzes:22.75,exam:29.1,average:93.24,grade:1.7},finalGradeAverage:90.24,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401950",name:"Ocampo, Lorraine Nicole",midterm:{studentship:8.8,activities:19.8,recitation:14.4,quizzes:22.75,exam:27.3,average:93.05,grade:1.7},final:{studentship:9.8,activities:18.29,recitation:14.63,quizzes:23.5,exam:29.4,average:95.62,grade:1.5},finalGradeAverage:94.33,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400118",name:"Pascual, Eironn Jazmine",midterm:{studentship:7.7,activities:14,recitation:12,quizzes:21.25,exam:25.5,average:80.45,grade:2.8},final:{studentship:9,activities:16.39,recitation:11.93,quizzes:15.13,exam:25.2,average:77.64,grade:2.9},finalGradeAverage:79.04,finalGradeEquivalent:2.8,interpretation:"Incomplete",remarks:"Incomplete, Missing Submission Assessment Workshop for Activity 1"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400002",name:"Sabado, Princess",midterm:{studentship:8.3,activities:19.8,recitation:13.8,quizzes:19.58,exam:23.4,average:84.88,grade:2.6},final:{studentship:9.6,activities:18.29,recitation:13.88,quizzes:22.06,exam:28.2,average:92.03,grade:1.8},finalGradeAverage:88.46,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202403032",name:"Solanib, Claire",midterm:{studentship:9.1,activities:19.8,recitation:13.8,quizzes:23.33,exam:27.9,average:93.93,grade:1.7},final:{studentship:9.6,activities:18.68,recitation:13.95,quizzes:22.63,exam:29.1,average:93.95,grade:1.7},finalGradeAverage:93.94,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401995",name:"Tiglao, Louie Fhey",midterm:{studentship:8.6,activities:18.6,recitation:13.8,quizzes:19.5,exam:23.4,average:83.9,grade:2.6},final:{studentship:9.6,activities:18.29,recitation:13.95,quizzes:22.81,exam:29.4,average:94.05,grade:1.6},finalGradeAverage:88.98,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202402213",name:"Tolentino, Jastine Raine",midterm:{studentship:8.6,activities:19.2,recitation:13.8,quizzes:18.5,exam:22.2,average:82.3,grade:2.7},final:{studentship:9.6,activities:16.78,recitation:13.95,quizzes:21.94,exam:27.3,average:89.56,grade:2.1},finalGradeAverage:85.93,finalGradeEquivalent:2.4,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202403029",name:"Tongol, Mariel",midterm:{studentship:8.4,activities:19.6,recitation:14.1,quizzes:21.25,exam:25.5,average:88.85,grade:2.2},final:{studentship:9.7,activities:18.14,recitation:14.18,quizzes:22.06,exam:28.2,average:92.27,grade:1.8},finalGradeAverage:90.56,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400190",name:"Torralba, Lian Faith",midterm:{studentship:8.8,activities:19.2,recitation:12.9,quizzes:22.83,exam:27.3,average:91.03,grade:1.9},final:{studentship:9.3,activities:18.45,recitation:12.83,quizzes:21.06,exam:26.7,average:88.33,grade:2.2},finalGradeAverage:89.68,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400124",name:"Torres, Althea",midterm:{studentship:8.6,activities:19.8,recitation:12.3,quizzes:23.92,exam:28.5,average:93.12,grade:1.7},final:{studentship:9.1,activities:17.28,recitation:12.3,quizzes:17.69,exam:28.5,average:84.87,grade:2.6},finalGradeAverage:88.99,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202403031",name:"Yamzon, Zhahara Mae",midterm:{studentship:9.2,activities:19.8,recitation:14.1,quizzes:20.92,exam:25.2,average:89.22,grade:2.1},final:{studentship:9.7,activities:18.91,recitation:14.33,quizzes:22.56,exam:28.2,average:93.7,grade:1.7},finalGradeAverage:91.46,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202403359",name:"Antoni, Alexr Bono",midterm:{studentship:9.5,activities:20,recitation:13.5,quizzes:23.92,exam:28.8,average:95.72,grade:1.4},final:{studentship:9.5,activities:18.29,recitation:13.5,quizzes:19.63,exam:24.3,average:85.22,grade:2.5},finalGradeAverage:90,finalGradeEquivalent:2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500371",name:"Bautista, Ethan Jeff",midterm:{studentship:9,activities:19.4,recitation:13.5,quizzes:24,exam:28.8,average:94.7,grade:1.5},final:{studentship:9.5,activities:16.66,recitation:13.43,quizzes:22.63,exam:28.5,average:90.71,grade:1.9},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500375",name:"Bonus, Jobel",midterm:{studentship:9.1,activities:19,recitation:13.8,quizzes:23.17,exam:27.9,average:92.97,grade:1.7},final:{studentship:9.6,activities:18.37,recitation:13.8,quizzes:22.5,exam:28.2,average:92.47,grade:1.8},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C2025500989",name:"Cabantog, Raeka",midterm:{studentship:8.4,activities:19.4,recitation:14.1,quizzes:21,exam:25.2,average:88.1,grade:2.2},final:{studentship:9.4,activities:18.6,recitation:13.13,quizzes:20.5,exam:26.1,average:87.73,grade:2.2},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202406133",name:"Cabauatan, Reinalyn",midterm:{studentship:8.3,activities:20,recitation:13.8,quizzes:21.17,exam:25.2,average:88.47,grade:2.2},final:{studentship:9.6,activities:18.6,recitation:13.8,quizzes:23,exam:29.1,average:94.1,grade:1.6},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500388",name:"Calma, Rabyn",midterm:{studentship:9.2,activities:19.4,recitation:14.1,quizzes:24.17,exam:29.1,average:95.97,grade:1.4},final:{studentship:9.7,activities:18.76,recitation:14.18,quizzes:22.81,exam:28.5,average:93.94,grade:1.6},finalGradeAverage:95,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500399",name:"Clemente, John Gabriel",midterm:{studentship:9.5,activities:19.6,recitation:13.5,quizzes:22.58,exam:27,average:92.18,grade:1.8},final:{studentship:9.5,activities:18.14,recitation:13.5,quizzes:23.56,exam:29.1,average:93.8,grade:1.6},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202400112",name:"Contreras, Princess Renee",midterm:{studentship:9.3,activities:19.6,recitation:12.9,quizzes:22.58,exam:27,average:91.38,grade:1.9},final:{studentship:9.3,activities:17.75,recitation:12.83,quizzes:21.56,exam:27.9,average:89.34,grade:2.1},finalGradeAverage:90,finalGradeEquivalent:2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500401",name:"Cutamura, Jasper",midterm:{studentship:9.7,activities:19.8,recitation:14.1,quizzes:23.5,exam:28.2,average:95.3,grade:1.5},final:{studentship:9.7,activities:18.14,recitation:14.18,quizzes:22.63,exam:27.6,average:92.24,grade:1.8},finalGradeAverage:94,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202501089",name:"Del Mundo, Chelsey Nicole",midterm:{studentship:8.4,activities:19.4,recitation:14.1,quizzes:21.83,exam:26.1,average:89.83,grade:2},final:{studentship:9.7,activities:18.45,recitation:14.33,quizzes:24.06,exam:29.4,average:95.93,grade:1.4},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500427",name:"Gumamit, Kaori",midterm:{studentship:8.2,activities:19.8,recitation:14.1,quizzes:22.25,exam:26.7,average:91.05,grade:1.9},final:{studentship:9.7,activities:18.37,recitation:14.18,quizzes:22.31,exam:28.5,average:93.06,grade:1.7},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202402060",name:"Leopando, Ana Rossiel",midterm:{studentship:8.1,activities:19.8,recitation:13.2,quizzes:22.75,exam:27.3,average:91.15,grade:1.9},final:{studentship:9.4,activities:17.59,recitation:13.13,quizzes:22.75,exam:28.8,average:91.67,grade:1.9},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500430",name:"Libag, Jireh Raphael",midterm:{studentship:8.7,activities:19.8,recitation:14.1,quizzes:19.17,exam:22.8,average:84.57,grade:2.6},final:{studentship:9.7,activities:17.59,recitation:14.18,quizzes:22.19,exam:28.2,average:91.85,grade:1.9},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500431",name:"Lopez, Edgar Joshua",midterm:{studentship:7.3,activities:20,recitation:11.1,quizzes:22.67,exam:27.3,average:88.37,grade:2.2},final:{studentship:8.7,activities:17.13,recitation:11.1,quizzes:21.06,exam:26.7,average:84.69,grade:2.6},finalGradeAverage:87,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500432",name:"Lulu, Erich Camille",midterm:{studentship:8.1,activities:19.2,recitation:13.8,quizzes:21.83,exam:26.1,average:89.03,grade:2.1},final:{studentship:9.6,activities:17.59,recitation:13.88,quizzes:20.44,exam:25.8,average:87.3,grade:2.3},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500433",name:"Mallari, Sophia Lorraine",midterm:{studentship:9.3,activities:19.8,recitation:12.9,quizzes:22.67,exam:27.3,average:91.97,grade:1.9},final:{studentship:9.3,activities:18.52,recitation:12.75,quizzes:21.44,exam:27.6,average:89.61,grade:2.1},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500329",name:"Manalo, Renee Sofiel",midterm:{studentship:8.7,activities:19.2,recitation:13.2,quizzes:22.92,exam:27.6,average:91.62,grade:1.9},final:{studentship:9.2,activities:17.36,recitation:12.83,quizzes:22,exam:27.6,average:88.98,grade:2.2},finalGradeAverage:90,finalGradeEquivalent:2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500335",name:"Manaloto, John Dennise",midterm:{studentship:8.9,activities:19.4,recitation:13.2,quizzes:24.42,exam:29.1,average:95.02,grade:1.5},final:{studentship:9.4,activities:17.75,recitation:13.13,quizzes:21.5,exam:27.3,average:89.07,grade:2.1},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500339",name:"Manalus, Sarah",midterm:{studentship:8.6,activities:19.4,recitation:13.8,quizzes:21.92,exam:26.1,average:89.82,grade:2.1},final:{studentship:9.6,activities:18.91,recitation:13.88,quizzes:22.56,exam:28.2,average:93.15,grade:1.7},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500344",name:"Manlutac, Jasmine",midterm:{studentship:9.1,activities:19.6,recitation:13.8,quizzes:23.08,exam:27.6,average:93.18,grade:1.7},final:{studentship:9.6,activities:18.83,recitation:13.88,quizzes:22.81,exam:28.5,average:93.62,grade:1.7},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500355",name:"Masing, Joanna Mae",midterm:{studentship:9.2,activities:18.8,recitation:14.7,quizzes:21.33,exam:25.5,average:89.53,grade:2.1},final:{studentship:9.7,activities:18.91,recitation:14.63,quizzes:21.81,exam:27.9,average:92.95,grade:1.8},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500364",name:"Napo, Enzo Rahniell",midterm:{studentship:7.7,activities:10.6,recitation:12.3,quizzes:22.17,exam:26.4,average:79.17,grade:2.8},final:{studentship:9.1,activities:18.52,recitation:12.23,quizzes:16.69,exam:27,average:83.54,grade:2.6},finalGradeAverage:81,finalGradeEquivalent:2.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500374",name:"Neave, Juchelle Rae",midterm:{studentship:8.1,activities:19.8,recitation:13.8,quizzes:24.25,exam:29.1,average:95.05,grade:1.5},final:{studentship:9.6,activities:18.83,recitation:13.88,quizzes:22.88,exam:29.1,average:94.28,grade:1.6},finalGradeAverage:95,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500376",name:"Nucup, Alexie Nicole",midterm:{studentship:7.6,activities:19.8,recitation:12.3,quizzes:22,exam:26.4,average:88.1,grade:2.2},final:{studentship:9.1,activities:18.6,recitation:12.23,quizzes:20.75,exam:26.4,average:87.08,grade:2.3},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500385",name:"Pagbilao, Isabelle Victoria",midterm:{studentship:8.4,activities:19.6,recitation:14.1,quizzes:23.92,exam:28.8,average:94.82,grade:1.6},final:{studentship:9.7,activities:18.06,recitation:14.33,quizzes:21.69,exam:27.9,average:91.67,grade:1.9},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500386",name:"Pamintuan, Arhelle Joy",midterm:{studentship:7.5,activities:19.4,recitation:11.7,quizzes:19.17,exam:22.8,average:80.57,grade:2.8},final:{studentship:8.9,activities:18.14,recitation:11.7,quizzes:19.44,exam:24.3,average:82.47,grade:2.7},finalGradeAverage:82,finalGradeEquivalent:2.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500457",name:"Perry, Katelyn Anne",midterm:{studentship:7.9,activities:18.2,recitation:13.2,quizzes:21.5,exam:25.8,average:86.6,grade:2.4},final:{studentship:9.4,activities:18.37,recitation:13.13,quizzes:22.31,exam:27.9,average:91.11,grade:1.9},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500462",name:"Pineda, Lance Jarren",midterm:{studentship:7.8,activities:19.6,recitation:12.9,quizzes:22.33,exam:26.7,average:89.33,grade:2.1},final:{studentship:9.3,activities:17.9,recitation:12.75,quizzes:21.75,exam:27.6,average:89.3,grade:2.1},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202406304",name:"Punsalan, Miel Lujille",midterm:{studentship:8.2,activities:19,recitation:14.1,quizzes:22,exam:26.4,average:89.7,grade:2.1},final:{studentship:9.7,activities:17.36,recitation:14.18,quizzes:18.25,exam:29.4,average:88.88,grade:2.2},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500474",name:"Regalado, Ferlyn Rose",midterm:{studentship:8.1,activities:19,recitation:13.2,quizzes:22,exam:26.4,average:88.7,grade:2.2},final:{studentship:9.4,activities:18.14,recitation:13.13,quizzes:20.88,exam:25.8,average:87.34,grade:2.3},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202402821",name:"Repuesto, Ryza Mae",midterm:{studentship:8.6,activities:19,recitation:12.3,quizzes:22.75,exam:27.3,average:89.95,grade:2.1},final:{studentship:9.1,activities:18.45,recitation:12.3,quizzes:21.31,exam:27,average:88.16,grade:2.2},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500481",name:"Salas, Brianne Lauren",midterm:{studentship:7.5,activities:20,recitation:12,quizzes:22,exam:26.4,average:87.9,grade:2.3},final:{studentship:9,activities:17.51,recitation:12,quizzes:20.88,exam:26.4,average:85.79,grade:2.5},finalGradeAverage:87,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500486",name:"Santos, Ian Karl",midterm:{studentship:8.3,activities:18.8,recitation:13.8,quizzes:20.33,exam:24.3,average:85.53,grade:2.5},final:{studentship:9.6,activities:18.6,recitation:13.8,quizzes:22.81,exam:28.8,average:93.61,grade:1.7},finalGradeAverage:90,finalGradeEquivalent:2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500482",name:"Santos, Lebron Ace",midterm:{studentship:9.2,activities:18.6,recitation:14.1,quizzes:24.25,exam:29.1,average:95.25,grade:1.5},final:{studentship:9.7,activities:17.75,recitation:14.18,quizzes:22.94,exam:28.8,average:93.36,grade:1.7},finalGradeAverage:94,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202403055",name:"Sena, Leila Nicole",midterm:{studentship:7.45,activities:19.2,recitation:11.25,quizzes:21,exam:25.2,average:84.1,grade:2.6},final:{studentship:8.75,activities:17.9,recitation:11.25,quizzes:15.13,exam:24.9,average:77.93,grade:2.9},finalGradeAverage:81,finalGradeEquivalent:2.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202403035",name:"Serraon, John Michael",midterm:{studentship:8.6,activities:19.2,recitation:13.8,quizzes:21.5,exam:25.8,average:88.9,grade:2.2},final:{studentship:9.6,activities:17.51,recitation:13.88,quizzes:17.5,exam:28.5,average:86.99,grade:2.4},finalGradeAverage:88,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202402675",name:"Sevilla, Yohanan",midterm:{studentship:9.2,activities:19.2,recitation:12.6,quizzes:22.75,exam:27.3,average:91.05,grade:1.9},final:{studentship:9.2,activities:17.36,recitation:12.45,quizzes:20.56,exam:26.4,average:85.97,grade:2.5},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500492",name:"Solis, Adrian Yuri",midterm:{studentship:8.4,activities:19.8,recitation:13.2,quizzes:22.67,exam:27.3,average:91.37,grade:1.9},final:{studentship:9.4,activities:16.74,recitation:13.2,quizzes:19,exam:23.1,average:81.44,grade:2.7},finalGradeAverage:86,finalGradeEquivalent:2.4,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500494",name:"Sombilla, Jimwell Adrian",midterm:{studentship:7.6,activities:19,recitation:12,quizzes:23.67,exam:28.5,average:90.77,grade:2},final:{studentship:9,activities:17.98,recitation:12,quizzes:21,exam:27,average:86.98,grade:2.4},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500496",name:"Soriano, Chelzy",midterm:{studentship:8,activities:19.8,recitation:13.2,quizzes:23.25,exam:27.9,average:92.15,grade:1.8},final:{studentship:9.4,activities:18.41,recitation:13.05,quizzes:22.5,exam:27.9,average:91.26,grade:1.9},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500499",name:"Tamayo, Alyssa",midterm:{studentship:7.8,activities:20,recitation:12.6,quizzes:22.75,exam:27.3,average:90.45,grade:2},final:{studentship:9.2,activities:17.13,recitation:12.53,quizzes:22.75,exam:28.5,average:90.1,grade:2},finalGradeAverage:90,finalGradeEquivalent:2,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500502",name:"Tiangco, Hannah Sofia",midterm:{studentship:7.8,activities:20,recitation:12.3,quizzes:20,exam:24,average:84.1,grade:2.6},final:{studentship:9.1,activities:18.21,recitation:12.23,quizzes:20.75,exam:26.4,average:86.69,grade:2.4},finalGradeAverage:85,finalGradeEquivalent:2.5,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500503",name:"Tiu, Azumi Shin",midterm:{studentship:8.2,activities:19.8,recitation:13.5,quizzes:21.75,exam:26.1,average:89.35,grade:2.1},final:{studentship:9.5,activities:18.29,recitation:13.58,quizzes:22.56,exam:28.2,average:92.13,grade:1.8},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500511",name:"Tua, Freyah Loise",midterm:{studentship:9,activities:19.4,recitation:13.5,quizzes:23.42,exam:28.2,average:93.52,grade:1.7},final:{studentship:9.5,activities:17.83,recitation:13.58,quizzes:21.94,exam:27.6,average:90.44,grade:2},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202201968",name:"Valenton, Rose Anne",midterm:{studentship:9.7,activities:19.6,recitation:14.1,quizzes:22.08,exam:26.4,average:91.88,grade:1.9},final:{studentship:9.7,activities:18.6,recitation:14.18,quizzes:22.94,exam:29.1,average:94.51,grade:1.6},finalGradeAverage:93,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500513",name:"Velasco, Harvey",midterm:{studentship:8.1,activities:20,recitation:13.5,quizzes:23.75,exam:28.5,average:93.85,grade:1.7},final:{studentship:9.5,activities:16.35,recitation:13.58,quizzes:22.25,exam:28.5,average:90.17,grade:2},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500516",name:"Villaos, Jhedz Chris Haeven",midterm:{studentship:9.4,activities:19.4,recitation:14.7,quizzes:23.42,exam:28.2,average:95.12,grade:1.5},final:{studentship:9,activities:18.14,recitation:13.35,quizzes:20.31,exam:25.8,average:86.6,grade:2.4},finalGradeAverage:91,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"DVM1B",studentNumber:"C202500521",name:"West, Johna Mae",midterm:{studentship:9.4,activities:19.2,recitation:14.7,quizzes:23.25,exam:27.9,average:94.45,grade:1.6},final:{studentship:9,activities:17.9,recitation:13.35,quizzes:21.13,exam:27.3,average:88.68,grade:2.2},finalGradeAverage:92,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"None"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202401007",name:"Arreola, Reyna Y.",midterm:{studentship:9.7,activities:19,recitation:14.1,quizzes:22.17,exam:26.4,average:91.37,grade:1.9},final:{studentship:9.7,activities:19.52,recitation:14.18,quizzes:21.88,exam:27.6,average:92.87,grade:1.7},finalGradeAverage:92.12,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400280",name:"Bermas, Cherlyn O.",midterm:{studentship:9.6,activities:19.2,recitation:13.8,quizzes:20.67,exam:24.9,average:88.17,grade:2.2},final:{studentship:9.6,activities:19.36,recitation:13.95,quizzes:22.56,exam:28.8,average:94.27,grade:1.6},finalGradeAverage:91.22,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400101",name:"Bersano, Danaya Jhoy E.",midterm:{studentship:9.7,activities:19.2,recitation:14.1,quizzes:21.42,exam:25.5,average:89.92,grade:2},final:{studentship:9.7,activities:19.36,recitation:14.18,quizzes:22.5,exam:28.8,average:94.54,grade:1.5},finalGradeAverage:92.23,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402827",name:"Calaguas, Shaniah Keith M.",midterm:{studentship:9.7,activities:19.6,recitation:14.1,quizzes:22.33,exam:26.7,average:92.43,grade:1.8},final:{studentship:9.7,activities:19.68,recitation:14.25,quizzes:22.31,exam:28.2,average:94.14,grade:1.6},finalGradeAverage:93.29,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400279",name:"Canimo, Alexa E.",midterm:{studentship:8.2,activities:19.4,recitation:13.5,quizzes:21.75,exam:26.1,average:88.95,grade:2.1},final:{studentship:9.5,activities:19.52,recitation:13.5,quizzes:22.44,exam:28.8,average:93.76,grade:1.6},finalGradeAverage:91.35,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402231",name:"Dabu, Erica B.",midterm:{studentship:9.1,activities:19.6,recitation:13.8,quizzes:21.5,exam:25.8,average:89.8,grade:2},final:{studentship:9.6,activities:19.68,recitation:13.88,quizzes:22.69,exam:28.5,average:94.34,grade:1.6},finalGradeAverage:92.07,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400130",name:"David, Jaylou M.",midterm:{studentship:8.7,activities:19.4,recitation:14.4,quizzes:21.58,exam:25.8,average:89.88,grade:2},final:{studentship:9.7,activities:19.52,recitation:14.48,quizzes:21.88,exam:27.9,average:93.47,grade:1.7},finalGradeAverage:91.68,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402007",name:"Enciso, Larah Chrisianne M.",midterm:{studentship:9.1,activities:19.8,recitation:13.8,quizzes:20.42,exam:24.6,average:87.72,grade:2.2},final:{studentship:9.6,activities:19.68,recitation:13.95,quizzes:23.19,exam:28.8,average:95.22,grade:1.5},finalGradeAverage:91.47,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402030",name:"Hernandez, Daisy Normina M.",midterm:{studentship:9.7,activities:19.8,recitation:13.5,quizzes:23,exam:27.6,average:93.6,grade:1.6},final:{studentship:9.7,activities:19.52,recitation:13.95,quizzes:22.38,exam:28.5,average:94.05,grade:1.6},finalGradeAverage:93.82,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400133",name:"Heroca, Donna Mae T.",midterm:{studentship:8.6,activities:19.6,recitation:13.8,quizzes:23.75,exam:28.5,average:94.25,grade:1.6},final:{studentship:9.6,activities:19.52,recitation:13.88,quizzes:20.13,exam:25.8,average:88.92,grade:2.1},finalGradeAverage:91.59,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400034",name:"Lansangan, Julie T.",midterm:{studentship:9.1,activities:19.2,recitation:13.8,quizzes:22.42,exam:27,average:91.52,grade:1.8},final:{studentship:9.6,activities:19.36,recitation:13.8,quizzes:22.25,exam:28.5,average:93.51,grade:1.6},finalGradeAverage:92.51,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402022",name:"Manabat, Jhun-Robert C.",midterm:{studentship:9.2,activities:19.6,recitation:13.5,quizzes:23.33,exam:27.9,average:93.53,grade:1.7},final:{studentship:9.7,activities:19.52,recitation:13.95,quizzes:22.88,exam:28.8,average:94.85,grade:1.6},finalGradeAverage:94.19,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402003",name:"Manilay, Kate Nicole G.",midterm:{studentship:8.7,activities:19.6,recitation:14.1,quizzes:23.25,exam:27.9,average:93.55,grade:1.7},final:{studentship:9.7,activities:19.52,recitation:14.18,quizzes:22.88,exam:28.8,average:95.07,grade:1.5},finalGradeAverage:94.31,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400281",name:"Mendoza, Nica Shane P.",midterm:{studentship:8.1,activities:19.8,recitation:12.3,quizzes:21.67,exam:25.8,average:87.67,grade:2.3},final:{studentship:9.1,activities:19.36,recitation:12.23,quizzes:21.75,exam:27.9,average:90.34,grade:2},finalGradeAverage:89,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202407128",name:"Miranda, Raven Q.",midterm:{studentship:7.3,activities:19,recitation:11.4,quizzes:19.42,exam:23.1,average:80.22,grade:2.8},final:{studentship:8.8,activities:19.52,recitation:11.48,quizzes:18.56,exam:22.2,average:80.56,grade:2.8},finalGradeAverage:80.39,finalGradeEquivalent:2.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402013",name:"Ochoco, Rhea M.",midterm:{studentship:9.7,activities:19.8,recitation:14.1,quizzes:23.5,exam:28.2,average:95.3,grade:1.5},final:{studentship:9.7,activities:19.68,recitation:14.18,quizzes:22.63,exam:28.8,average:94.98,grade:1.6},finalGradeAverage:95.14,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202401848",name:"Piquinto, Rainer Mark P.",midterm:{studentship:9.7,activities:19.2,recitation:14.1,quizzes:23.08,exam:27.6,average:93.68,grade:1.7},final:{studentship:9.7,activities:19.52,recitation:14.25,quizzes:23.56,exam:29.1,average:96.13,grade:1.4},finalGradeAverage:94.91,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400094",name:"Santos, Unice Manabat M.",midterm:{studentship:8.9,activities:20,recitation:13.2,quizzes:22.75,exam:27.3,average:92.15,grade:1.8},final:{studentship:9.4,activities:19.84,recitation:13.2,quizzes:21.94,exam:27.6,average:91.98,grade:1.9},finalGradeAverage:92.06,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400135",name:"Tiria, Jhon Lloyd C.",midterm:{studentship:8.3,activities:19.8,recitation:13.8,quizzes:23.25,exam:27.9,average:93.05,grade:1.7},final:{studentship:9.6,activities:19.52,recitation:13.95,quizzes:23.44,exam:29.1,average:95.61,grade:1.5},finalGradeAverage:94.33,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202401145",name:"Valencia, Channele",midterm:{studentship:8.5,activities:20,recitation:13.5,quizzes:22.92,exam:27.6,average:92.52,grade:1.8},final:{studentship:9.5,activities:19.68,recitation:13.58,quizzes:22.06,exam:28.2,average:93.02,grade:1.7},finalGradeAverage:92.77,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400132",name:"Velez, Verdeen R.",midterm:{studentship:9.3,activities:19.4,recitation:14.4,quizzes:24.25,exam:29.1,average:96.45,grade:1.4},final:{studentship:9.3,activities:19.52,recitation:13.58,quizzes:22.56,exam:28.8,average:93.76,grade:1.7},finalGradeAverage:95.1,finalGradeEquivalent:1.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202400186",name:"Vicente, Mike Joseph Ivan C.",midterm:{studentship:9.2,activities:20,recitation:14.1,quizzes:23.25,exam:27.9,average:94.45,grade:1.6},final:{studentship:9.7,activities:19.52,recitation:14.18,quizzes:22.13,exam:27.9,average:93.42,grade:1.7},finalGradeAverage:93.94,finalGradeEquivalent:1.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2A",studentNumber:"C202402840",name:"Yumul, Rasha Mae M.",midterm:{studentship:8.9,activities:19.8,recitation:13.2,quizzes:23.25,exam:27.9,average:93.05,grade:1.7},final:{studentship:9.4,activities:19.68,recitation:13.2,quizzes:19.81,exam:24.6,average:86.69,grade:2.4},finalGradeAverage:89.87,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202302563",name:"Alcoriza, Stephany",midterm:{studentship:8.75,activities:18.4,recitation:11.25,quizzes:21.33,exam:25.5,average:85.23,grade:2.5},final:{studentship:8.75,activities:18.37,recitation:11.25,quizzes:22.31,exam:27.6,average:88.28,grade:2.2},finalGradeAverage:86.76,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202402345",name:"Antonio, Cristine",midterm:{studentship:9.7,activities:20,recitation:14.1,quizzes:22.67,exam:27.3,average:93.77,grade:1.6},final:{studentship:9.7,activities:18.21,recitation:14.18,quizzes:21.31,exam:27,average:90.4,grade:2},finalGradeAverage:92.08,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400084",name:"Buniag, Karl Anthony",midterm:{studentship:9.6,activities:19.6,recitation:13.8,quizzes:22.75,exam:27.3,average:93.05,grade:1.7},final:{studentship:9.6,activities:18.45,recitation:13.8,quizzes:22.44,exam:28.2,average:92.48,grade:1.8},finalGradeAverage:92.77,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202401860",name:"Callo, Neelie Ann",midterm:{studentship:9.7,activities:18.4,recitation:14.1,quizzes:21.75,exam:26.1,average:90.05,grade:2},final:{studentship:9.7,activities:18.45,recitation:14.33,quizzes:21.25,exam:27.3,average:91.02,grade:1.9},finalGradeAverage:90.54,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202402830",name:"Calo, Andrea Clare",midterm:{studentship:9.2,activities:19.6,recitation:14.1,quizzes:23,exam:27.6,average:93.5,grade:1.6},final:{studentship:9.7,activities:18.83,recitation:14.18,quizzes:22.25,exam:28.5,average:93.46,grade:1.7},finalGradeAverage:93.48,finalGradeEquivalent:1.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202200245",name:"Canaua, Leslie Joy",midterm:{studentship:9.6,activities:18.8,recitation:13.8,quizzes:22.3,exam:26.7,average:91.23,grade:1.9},final:{studentship:9.6,activities:18.52,recitation:13.88,quizzes:21.63,exam:27,average:90.62,grade:1.9},finalGradeAverage:90.93,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202302573",name:"Cayetano, Merlette",midterm:{studentship:9.7,activities:19.6,recitation:14.1,quizzes:19.92,exam:23.7,average:87.02,grade:2.3},final:{studentship:9.7,activities:17.83,recitation:14.25,quizzes:22.5,exam:28.8,average:93.08,grade:1.7},finalGradeAverage:90.05,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400093",name:"Delos Santos, Sophia Caszandra",midterm:{studentship:9.3,activities:18,recitation:12.9,quizzes:22.25,exam:26.7,average:89.15,grade:2.1},final:{studentship:9.3,activities:19.15,recitation:12.75,quizzes:22.06,exam:27.3,average:90.56,grade:1.9},finalGradeAverage:89.85,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400031",name:"Dizon, Lian Joy",midterm:{studentship:9.5,activities:19.6,recitation:13.5,quizzes:21.08,exam:26.1,average:89.78,grade:2},final:{studentship:9.5,activities:17.75,recitation:13.5,quizzes:22.13,exam:28.2,average:91.07,grade:1.9},finalGradeAverage:90.43,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400073",name:"Dizon, Rheizel Sean",midterm:{studentship:9.4,activities:19.6,recitation:13.2,quizzes:21.92,exam:25.2,average:89.32,grade:2.1},final:{studentship:9.4,activities:18.37,recitation:13.2,quizzes:19.75,exam:24.3,average:85.02,grade:2.5},finalGradeAverage:87.17,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202302679",name:"Dungca, Erica",midterm:{studentship:9.6,activities:18.4,recitation:13.8,quizzes:19.83,exam:23.7,average:85.33,grade:2.5},final:{studentship:9.6,activities:18.6,recitation:13.8,quizzes:21.44,exam:27.3,average:90.74,grade:1.9},finalGradeAverage:88.04,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400129",name:"Espiritu, Princess Anne Magdalene",midterm:{studentship:8.9,activities:18.8,recitation:13.2,quizzes:20.5,exam:24.6,average:86,grade:2.4},final:{studentship:9.4,activities:18.76,recitation:13.05,quizzes:21.06,exam:27,average:89.27,grade:2.1},finalGradeAverage:87.63,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C20240395",name:"Fetizanan, Loiza",midterm:{studentship:9.5,activities:20,recitation:13.5,quizzes:21,exam:25.2,average:89.2,grade:2.1},final:{studentship:9.5,activities:18.29,recitation:13.58,quizzes:21,exam:27,average:89.37,grade:2.1},finalGradeAverage:89.28,finalGradeEquivalent:2.1,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202303009",name:"Lumanlan, Karl Deniel",midterm:{studentship:9.6,activities:19.6,recitation:13.8,quizzes:18.33,exam:21.9,average:83.23,grade:2.6},final:{studentship:9.6,activities:18.37,recitation:13.95,quizzes:22.69,exam:28.2,average:92.81,grade:1.8},finalGradeAverage:88.02,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400285",name:"Manalo, Nicole",midterm:{studentship:9.4,activities:19.6,recitation:13.2,quizzes:20.58,exam:24.6,average:87.38,grade:2.3},final:{studentship:9.4,activities:17.98,recitation:13.2,quizzes:21.44,exam:27.3,average:89.32,grade:2.1},finalGradeAverage:88.35,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202402819",name:"Manuel, Alexandra",midterm:{studentship:8.5,activities:18.8,recitation:12,quizzes:19.33,exam:23.1,average:81.73,grade:2.7},final:{studentship:9,activities:18.21,recitation:12,quizzes:19.31,exam:24.3,average:82.83,grade:2.7},finalGradeAverage:82.28,finalGradeEquivalent:2.7,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202402832",name:"Mungcal, Angel",midterm:{studentship:8.9,activities:18.8,recitation:13.2,quizzes:22.92,exam:27.3,average:91.12,grade:1.9},final:{studentship:9.4,activities:18.91,recitation:13.13,quizzes:21.63,exam:27.6,average:90.66,grade:2},finalGradeAverage:90.89,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202402241",name:"Paras, Crisgel",midterm:{studentship:8.4,activities:19.2,recitation:11.7,quizzes:22,exam:26.4,average:87.7,grade:2.3},final:{studentship:8.9,activities:17.9,recitation:11.7,quizzes:20.88,exam:25.8,average:85.18,grade:2.5},finalGradeAverage:86.44,finalGradeEquivalent:2.4,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400074",name:"Paras, Jaypee",midterm:{studentship:8.5,activities:18,recitation:12,quizzes:20.17,exam:24,average:82.67,grade:2.7},final:{studentship:9,activities:14.37,recitation:11.25,quizzes:17.94,exam:21,average:73.56,grade:4},finalGradeAverage:78.11,finalGradeEquivalent:2.9,interpretation:"Incomplete",remarks:"Incomplete, No Activity Report for Activity 2, No Final Exam"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400037",name:"Ramos, Moira",midterm:{studentship:8.7,activities:20,recitation:14.7,quizzes:22.75,exam:27.3,average:93.45,grade:1.7},final:{studentship:9.2,activities:18.91,recitation:13.58,quizzes:21.38,exam:27.6,average:90.66,grade:2},finalGradeAverage:92.06,finalGradeEquivalent:1.8,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400090",name:"Salangsang, Renz",midterm:{studentship:8.6,activities:19.2,recitation:13.8,quizzes:21.75,exam:26.1,average:89.45,grade:2.1},final:{studentship:9.6,activities:18.1,recitation:13.95,quizzes:22.88,exam:28.2,average:92.72,grade:1.8},finalGradeAverage:91.09,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400089",name:"Santiago, Rodalin",midterm:{studentship:8.9,activities:18.8,recitation:13.2,quizzes:20.92,exam:25.2,average:87.02,grade:2.3},final:{studentship:9.4,activities:17.83,recitation:13.2,quizzes:17.06,exam:27.6,average:85.09,grade:2.5},finalGradeAverage:86.05,finalGradeEquivalent:2.4,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400131",name:"Serrano, Joshua",midterm:{studentship:8.3,activities:19.6,recitation:12.9,quizzes:19.58,exam:23.4,average:83.78,grade:2.6},final:{studentship:9.3,activities:17.83,recitation:12.83,quizzes:22,exam:28.2,average:90.15,grade:2},finalGradeAverage:86.97,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202401919",name:"Tadeo, Divine",midterm:{studentship:8.9,activities:18.8,recitation:14.4,quizzes:18.67,exam:22.2,average:82.97,grade:2.7},final:{studentship:9.4,activities:18.6,recitation:13.8,quizzes:20,exam:25,average:87.3,grade:2.3},finalGradeAverage:85.13,finalGradeEquivalent:2.5,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400126",name:"Turla, Crystal Shayne",midterm:{studentship:9,activities:19.2,recitation:13.5,quizzes:18.75,exam:22.2,average:82.65,grade:2.7},final:{studentship:9.5,activities:18.37,recitation:13.43,quizzes:22.69,exam:28.2,average:92.18,grade:1.8},finalGradeAverage:87.42,finalGradeEquivalent:2.3,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202400125",name:"Zabala, Thea",midterm:{studentship:8.25,activities:19.6,recitation:11.25,quizzes:21.17,exam:25.5,average:85.77,grade:2.5},final:{studentship:8.75,activities:18.52,recitation:11.33,quizzes:19.13,exam:23.7,average:81.42,grade:2.7},finalGradeAverage:83.6,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"},
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2C",studentNumber:"C202302634",name:"Zara, John Russel",midterm:{studentship:8.7,activities:19.6,recitation:14.1,quizzes:20.17,exam:24,average:86.57,grade:2.4},final:{studentship:9.7,activities:17.75,recitation:14.33,quizzes:21.56,exam:26.7,average:90.04,grade:2},finalGradeAverage:88.3,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
+];
+
+function getEquivalent(avg) {
+  if (avg >= 97) return "1.00";
+  if (avg >= 94) return "1.25";
+  if (avg >= 91) return "1.50";
+  if (avg >= 88) return "1.75";
+  if (avg >= 85) return "2.00";
+  if (avg >= 82) return "2.25";
+  if (avg >= 79) return "2.50";
+  if (avg >= 76) return "2.75";
+  if (avg >= 75) return "3.00";
+  return "5.00";
+}
+
+function handleSubmit() {
+  const input = document.getElementById('studentInput').value.trim().toLowerCase();
+  if (!input) return;
+  const student = students.find(s => s.studentNumber.toLowerCase() === input);
+  const results = document.getElementById('results');
+
+  if (!student) {
+    results.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-5 text-red-700 text-center"><i data-lucide="alert-circle" class="w-5 h-5 inline mb-1"></i><p class="mt-1 font-medium">Student not found. Please check your Student Number.</p></div>`;
+    lucide.createIcons();
+    return;
+  }
+
+  const interpretation = student.interpretation;
+  const finalEquiv = student.finalGradeEquivalent;
+  const finalAvg = student.finalGradeAverage;
+
+  // Build result based on status
+  let resultsHTML = `
+    <!-- Student Info Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4 relative">
+      <div class="absolute top-6 right-6 bg-emerald-100 border border-emerald-300 rounded-lg px-4 py-2">
+        <p class="text-lg font-bold text-emerald-700">${student.section}</p>
+      </div>
+      <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Student</p>
+      <h2 class="heading-font text-2xl text-slate-800 mb-2">${student.name}</h2>
+      <p class="text-slate-600 text-sm mb-1">${student.studentNumber.toUpperCase()}</p>
+      <p class="text-slate-500 text-xs">${student.subject}</p>
+    </div>
+  `;
+
+  if (interpretation === "Incomplete") {
+    // Show incomplete message
+    const remarkText = student.remarks.replace('Incomplete, ', '');
+    resultsHTML += `
+      <div class="bg-amber-50 border border-amber-300 rounded-xl p-6 mb-4">
+        <div class="flex items-start gap-3">
+          <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <h3 class="font-semibold text-amber-900 mb-2">INC</h3>
+            <p class="text-sm text-amber-800 mb-3">${remarkText}</p>
+            <p class="text-sm text-amber-700 font-medium">You have 1 year from the end of this term to complete the requirements. If not completed within this period, your grade will automatically lapse to a 5.0.</p>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // Show passed student grades
+    resultsHTML += `
+      <!-- Final Grade Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4">
+        <h3 class="font-semibold text-slate-700 mb-4">Final Grade</h3>
+        
+        <!-- Overall Final Grade -->
+        <div class="mb-6 pb-6 border-b border-slate-100">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p class="text-xs text-slate-500 mb-1">Final Grade Average</p>
+              <p class="text-3xl font-bold text-slate-800">${finalAvg}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 mb-1">Grade Equivalent</p>
+              <p class="text-3xl font-bold text-emerald-600">${finalEquiv}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 mb-1">Status</p>
+              <p class="text-3xl font-bold text-emerald-600">${interpretation}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Midterm and Final Term Section -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <!-- Midterm -->
+          <div>
+            <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Midterm</p>
+            <div class="space-y-2">
+              <div>
+                <p class="text-xs text-slate-500">Grade Equivalent</p>
+                <p class="text-xl font-bold text-slate-800">${student.midterm.grade}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Average</p>
+                <p class="text-lg font-semibold text-slate-700">${student.midterm.average}</p>
+              </div>
+              <button onclick="toggleDropdown('midtermDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
+                <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="midtermDD-icon"></i>
+              </button>
+            </div>
+            <div id="midtermDD" class="dropdown-content mt-3">
+              <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
+                ${gradeRow('Studentship', student.midterm.studentship)}
+                ${gradeRow('Activities', student.midterm.activities)}
+                ${gradeRow('Recitation', student.midterm.recitation)}
+                ${gradeRow('Quizzes', student.midterm.quizzes)}
+                ${gradeRow('Exam', student.midterm.exam)}
+              </div>
+            </div>
+          </div>
+
+          <!-- Final Term -->
+          <div>
+            <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Final Term</p>
+            <div class="space-y-2">
+              <div>
+                <p class="text-xs text-slate-500">Grade Equivalent</p>
+                <p class="text-xl font-bold text-slate-800">${student.final.grade}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Average</p>
+                <p class="text-lg font-semibold text-slate-700">${student.final.average}</p>
+              </div>
+              <button onclick="toggleDropdown('finalDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
+                <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="finalDD-icon"></i>
+              </button>
+            </div>
+            <div id="finalDD" class="dropdown-content mt-3">
+              <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
+                ${gradeRow('Studentship', student.final.studentship)}
+                ${gradeRow('Activities', student.final.activities)}
+                ${gradeRow('Recitation', student.final.recitation)}
+                ${gradeRow('Quizzes', student.final.quizzes)}
+                ${gradeRow('Exam', student.final.exam)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  results.innerHTML = resultsHTML;
+  lucide.createIcons();
+}
+
+function gradeRow(label, value, bold) {
+  const displayLabel = label === 'Exam' ? 'Major Exam' : label;
+  return `<div class="flex justify-between"><span class="text-slate-500">${displayLabel}</span><span class="${bold ? 'font-bold text-slate-800' : 'text-slate-700'}">${value}</span></div>`;
+}
+
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  el.classList.toggle('open');
+  icon.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+function handleReset() {
+  document.getElementById('studentInput').value = '';
+  document.getElementById('results').innerHTML = '';
+}
+
+// Enter key support
+document.getElementById('studentInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+
+// Element SDK
+const defaultConfig = {
+  portal_title: "Student Grade Portal",
+  background_color: "#f8fafc",
+  surface_color: "#ffffff",
+  text_color: "#1e293b",
+  primary_action: "#059669",
+  secondary_action: "#e2e8f0"
+};
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    const title = config.portal_title || defaultConfig.portal_title;
+    document.getElementById('portalTitle').textContent = title;
+    document.getElementById('app').style.backgroundColor = config.background_color || defaultConfig.background_color;
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+      { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
+    ],
+    borderables: [],
+    fontEditable: {
+      get: () => config.font_family || defaultConfig.font_family || 'DM Sans',
+      set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+    },
+    fontSizeable: undefined
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ["portal_title", config.portal_title || defaultConfig.portal_title]
+  ])
+});
+
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fe83dd227af109f',t:'MTc3OTI0NzYwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
