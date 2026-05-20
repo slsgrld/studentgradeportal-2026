@@ -13,24 +13,42 @@
     .heading-font { font-family: 'Outfit', sans-serif; }
     .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
     .dropdown-content.open { max-height: 600px; }
+    
+    /* Loading animations */
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    @keyframes pulse-scale { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .loader-ring { animation: spin-slow 3s linear infinite; }
+    .loader-dot { animation: pulse-scale 1.5s ease-in-out infinite; }
+    .fade-in-anim { animation: fade-in 0.6s ease-out; }
+    .slide-up-anim { animation: slide-up 0.8s ease-out; }
+    
+    .loader-dot:nth-child(2) { animation-delay: 0.15s; }
+    .loader-dot:nth-child(3) { animation-delay: 0.3s; }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
   <div id="app" class="h-full w-full bg-slate-50 overflow-auto">
-   <div class="max-w-2xl mx-auto px-4 py-10"><!-- Header -->
+   <div class="max-w-2xl mx-auto px-4 py-10">
+    <!-- Header -->
     <div class="text-center mb-8">
      <h1 id="portalTitle" class="heading-font text-3xl md:text-4xl text-slate-800 mb-2">Student Grade Portal</h1>
      <p class="text-slate-500 text-sm">Check your academic performance and grades</p>
     </div><!-- Search -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"><label for="studentInput" class="block text-sm font-medium text-slate-700 mb-2">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 mb-4">
-     <div class="flex gap-3"><button onclick="handleSubmit()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 text-sm rounded-lg transition" title="Enter your Student Number to view your grades">Submit</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-4 text-sm rounded-lg transition">Reset</button>
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+     <label for="studentInput" class="block text-sm font-medium text-slate-700 mb-2">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 mb-4">
+     <div class="flex gap-3">
+      <button onclick="handleSubmit()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 text-sm rounded-lg transition" title="Enter your Student Number to view your grades">Submit</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-4 text-sm rounded-lg transition">Reset</button>
      </div>
     </div><!-- Results -->
     <div id="results"></div><!-- Gnomio Note -->
     <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-     <div class="flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+     <div class="flex items-start gap-2">
+      <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
       <p>Detailed breakdowns of specific activity scores, quiz scores, examination scores, and assignment scores are available on our learning platform, <strong>Gnomio</strong>. Please check Gnomio for more comprehensive information.</p>
      </div>
     </div>
@@ -202,135 +220,163 @@ function getEquivalent(avg) {
 function handleSubmit() {
   const input = document.getElementById('studentInput').value.trim().toLowerCase();
   if (!input) return;
-  const student = students.find(s => s.studentNumber.toLowerCase() === input);
+  
   const results = document.getElementById('results');
-
-  if (!student) {
-    results.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-5 text-red-700 text-center"><i data-lucide="alert-circle" class="w-5 h-5 inline mb-1"></i><p class="mt-1 font-medium">Student not found. Please check your Student Number.</p></div>`;
-    lucide.createIcons();
-    return;
-  }
-
-  const interpretation = student.interpretation;
-  const finalEquiv = student.finalGradeEquivalent;
-  const finalAvg = student.finalGradeAverage;
-
-  // Build result based on status
-  let resultsHTML = `
-    <!-- Student Info Card -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4 relative">
-      <div class="absolute top-6 right-6 bg-emerald-100 border border-emerald-300 rounded-lg px-4 py-2">
-        <p class="text-lg font-bold text-emerald-700">${student.section}</p>
+  
+  // Show loading page
+  results.innerHTML = `
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 mb-4 fade-in-anim text-center">
+      <div class="flex justify-center mb-6">
+        <div class="relative w-20 h-20">
+          <svg class="loader-ring absolute inset-0" width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" class="text-emerald-600 w-20 h-20">
+            <circle cx="40" cy="40" r="35" stroke-width="2" opacity="0.1"></circle>
+            <circle cx="40" cy="40" r="35" stroke-width="2" stroke-dasharray="55" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="flex gap-1">
+              <div class="loader-dot w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+              <div class="loader-dot w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+              <div class="loader-dot w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Student</p>
-      <h2 class="heading-font text-2xl text-slate-800 mb-2">${student.name}</h2>
-      <p class="text-slate-600 text-sm mb-1">${student.studentNumber.toUpperCase()}</p>
-      <p class="text-slate-500 text-xs">${student.subject}</p>
+      <p class="text-slate-600 font-medium mb-1">Searching for student</p>
+      <p class="text-slate-400 text-sm">${input.toUpperCase()}</p>
     </div>
   `;
+  
+  // Simulate loading delay for effect
+  setTimeout(() => {
+    const student = students.find(s => s.studentNumber.toLowerCase() === input);
 
-  if (interpretation === "Incomplete") {
-    // Show incomplete message
-    const remarkText = student.remarks.replace('Incomplete, ', '');
-    resultsHTML += `
-      <div class="bg-amber-50 border border-amber-300 rounded-xl p-6 mb-4">
-        <div class="flex items-start gap-3">
-          <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5"></i>
-          <div>
-            <h3 class="font-semibold text-amber-900 mb-2">INC</h3>
-            <p class="text-sm text-amber-800 mb-3">${remarkText}</p>
-            <p class="text-sm text-amber-700 font-medium">You have 1 year from the end of this term to complete the requirements. If not completed within this period, your grade will automatically lapse to a 5.0.</p>
-          </div>
+    if (!student) {
+      results.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-5 text-red-700 text-center slide-up-anim"><i data-lucide="alert-circle" class="w-5 h-5 inline mb-1"></i><p class="mt-1 font-medium">Student not found. Please check your Student Number.</p></div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    const interpretation = student.interpretation;
+    const finalEquiv = student.finalGradeEquivalent;
+    const finalAvg = student.finalGradeAverage;
+
+    // Build result based on status
+    let resultsHTML = `
+      <!-- Student Info Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4 relative slide-up-anim" style="animation-delay: 0s;">
+        <div class="absolute top-6 right-6 bg-emerald-100 border border-emerald-300 rounded-lg px-4 py-2">
+          <p class="text-lg font-bold text-emerald-700">${student.section}</p>
         </div>
+        <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Student</p>
+        <h2 class="heading-font text-2xl text-slate-800 mb-2">${student.name}</h2>
+        <p class="text-slate-600 text-sm mb-1">${student.studentNumber.toUpperCase()}</p>
+        <p class="text-slate-500 text-xs">${student.subject}</p>
       </div>
     `;
-  } else {
-    // Show passed student grades
-    resultsHTML += `
-      <!-- Final Grade Card -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4">
-        <h3 class="font-semibold text-slate-700 mb-4">Final Grade</h3>
-        
-        <!-- Overall Final Grade -->
-        <div class="mb-6 pb-6 border-b border-slate-100">
-          <div class="grid grid-cols-3 gap-4 text-center">
+
+    if (interpretation === "Incomplete") {
+      // Show incomplete message
+      const remarkText = student.remarks.replace('Missing Submission ', '');
+      resultsHTML += `
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-6 mb-4 slide-up-anim" style="animation-delay: 0.1s;">
+          <div class="flex items-start gap-3">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-500 mb-1">Final Grade Average</p>
-              <p class="text-3xl font-bold text-slate-800">${finalAvg}</p>
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 mb-1">Grade Equivalent</p>
-              <p class="text-3xl font-bold text-emerald-600">${finalEquiv}</p>
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 mb-1">Status</p>
-              <p class="text-3xl font-bold text-emerald-600">${interpretation}</p>
+              <h3 class="font-semibold text-amber-900 mb-2">INC</h3>
+              <p class="text-sm text-amber-800 mb-3">${remarkText}</p>
+              <p class="text-sm text-amber-700 font-medium">You have 1 year from the end of this term to complete the requirements. If not completed within this period, your grade will automatically lapse to a 5.0.</p>
             </div>
           </div>
         </div>
-
-        <!-- Midterm and Final Term Section -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
-          <!-- Midterm -->
-          <div>
-            <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Midterm</p>
-            <div class="space-y-2">
+      `;
+    } else {
+      // Show passed student grades
+      resultsHTML += `
+        <!-- Final Grade Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4 slide-up-anim" style="animation-delay: 0.1s;">
+          <h3 class="font-semibold text-slate-700 mb-4">Final Grade</h3>
+          
+          <!-- Overall Final Grade -->
+          <div class="mb-6 pb-6 border-b border-slate-100">
+            <div class="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p class="text-xs text-slate-500">Grade Equivalent</p>
-                <p class="text-xl font-bold text-slate-800">${student.midterm.grade}</p>
+                <p class="text-xs text-slate-500 mb-1">Final Grade Average</p>
+                <p class="text-3xl font-bold text-slate-800">${finalAvg}</p>
               </div>
               <div>
-                <p class="text-xs text-slate-500">Average</p>
-                <p class="text-lg font-semibold text-slate-700">${student.midterm.average}</p>
+                <p class="text-xs text-slate-500 mb-1">Grade Equivalent</p>
+                <p class="text-3xl font-bold text-emerald-600">${finalEquiv}</p>
               </div>
-              <button onclick="toggleDropdown('midtermDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
-                <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="midtermDD-icon"></i>
-              </button>
-            </div>
-            <div id="midtermDD" class="dropdown-content mt-3">
-              <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
-                ${gradeRow('Studentship', student.midterm.studentship)}
-                ${gradeRow('Activities', student.midterm.activities)}
-                ${gradeRow('Recitation', student.midterm.recitation)}
-                ${gradeRow('Quizzes', student.midterm.quizzes)}
-                ${gradeRow('Exam', student.midterm.exam)}
+              <div>
+                <p class="text-xs text-slate-500 mb-1">Status</p>
+                <p class="text-3xl font-bold text-emerald-600">${interpretation}</p>
               </div>
             </div>
           </div>
 
-          <!-- Final Term -->
-          <div>
-            <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Final Term</p>
-            <div class="space-y-2">
-              <div>
-                <p class="text-xs text-slate-500">Grade Equivalent</p>
-                <p class="text-xl font-bold text-slate-800">${student.final.grade}</p>
+          <!-- Midterm and Final Term Section -->
+          <div class="grid grid-cols-2 gap-6 mb-6">
+            <!-- Midterm -->
+            <div>
+              <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Midterm</p>
+              <div class="space-y-2">
+                <div>
+                  <p class="text-xs text-slate-500">Grade Equivalent</p>
+                  <p class="text-xl font-bold text-slate-800">${student.midterm.grade}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500">Average</p>
+                  <p class="text-lg font-semibold text-slate-700">${student.midterm.average}</p>
+                </div>
+                <button onclick="toggleDropdown('midtermDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
+                  <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="midtermDD-icon"></i>
+                </button>
               </div>
-              <div>
-                <p class="text-xs text-slate-500">Average</p>
-                <p class="text-lg font-semibold text-slate-700">${student.final.average}</p>
+              <div id="midtermDD" class="dropdown-content mt-3">
+                <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
+                  ${gradeRow('Studentship', student.midterm.studentship)}
+                  ${gradeRow('Activities', student.midterm.activities)}
+                  ${gradeRow('Recitation', student.midterm.recitation)}
+                  ${gradeRow('Quizzes', student.midterm.quizzes)}
+                  ${gradeRow('Exam', student.midterm.exam)}
+                </div>
               </div>
-              <button onclick="toggleDropdown('finalDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
-                <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="finalDD-icon"></i>
-              </button>
             </div>
-            <div id="finalDD" class="dropdown-content mt-3">
-              <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
-                ${gradeRow('Studentship', student.final.studentship)}
-                ${gradeRow('Activities', student.final.activities)}
-                ${gradeRow('Recitation', student.final.recitation)}
-                ${gradeRow('Quizzes', student.final.quizzes)}
-                ${gradeRow('Exam', student.final.exam)}
+
+            <!-- Final Term -->
+            <div>
+              <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">Final Term</p>
+              <div class="space-y-2">
+                <div>
+                  <p class="text-xs text-slate-500">Grade Equivalent</p>
+                  <p class="text-xl font-bold text-slate-800">${student.final.grade}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500">Average</p>
+                  <p class="text-lg font-semibold text-slate-700">${student.final.average}</p>
+                </div>
+                <button onclick="toggleDropdown('finalDD')" class="w-full mt-3 flex items-center justify-between text-xs font-medium text-emerald-600 hover:text-emerald-700 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 rounded">
+                  <span>View Breakdown</span><i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="finalDD-icon"></i>
+                </button>
+              </div>
+              <div id="finalDD" class="dropdown-content mt-3">
+                <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2">
+                  ${gradeRow('Studentship', student.final.studentship)}
+                  ${gradeRow('Activities', student.final.activities)}
+                  ${gradeRow('Recitation', student.final.recitation)}
+                  ${gradeRow('Quizzes', student.final.quizzes)}
+                  ${gradeRow('Exam', student.final.exam)}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
-  }
+      `;
+    }
 
-  results.innerHTML = resultsHTML;
-  lucide.createIcons();
+    results.innerHTML = resultsHTML;
+    lucide.createIcons();
+  }, 1500);
 }
 
 function gradeRow(label, value, bold) {
@@ -392,5 +438,5 @@ window.elementSdk.init({
 
 lucide.createIcons();
 </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fe83dd227af109f',t:'MTc3OTI0NzYwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fe86b4d74dc109f',t:'MTc3OTI0OTQ2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
