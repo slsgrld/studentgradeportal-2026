@@ -54,24 +54,20 @@
  </head>
  <body class="h-full">
   <div id="app" class="h-full w-full gradient-bg overflow-auto">
-   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12">
-    <!-- Header Section -->
+   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12"><!-- Header Section -->
     <div class="text-center mb-12">
-     <h1 id="portalTitle" class="heading-font text-5xl md:text-5xl font-bold mb-3 gradient-text">Student Grade Portal</h1>
-     <p class="text-slate-600 text-lg">Check your academic performance and grades</p>
+     <h1 id="portalTitle" class="heading-font text-3xl md:text-4xl font-bold mb-3 gradient-text">Student Grade Portal</h1>
+     <p class="text-slate-600 text-sm md:text-base">Check your academic performance and grades</p>
     </div><!-- Search Card -->
-    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-8 fade-in-anim">
-     <label for="studentInput" class="block text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border-2 border-slate-200 rounded-xl px-5 py-4 text-slate-800 text-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition mb-6">
-     <div class="flex gap-3">
-      <button onclick="handleSubmit()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg">Search Records</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Clear</button>
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-8 fade-in-anim"><label for="studentInput" class="block text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wide">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border-2 border-slate-200 rounded-xl px-5 py-3 text-slate-800 text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition mb-6">
+     <div class="flex gap-3"><button onclick="handleSubmit()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-6 rounded-xl transition shadow-lg text-sm">Search Records</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-6 rounded-xl transition text-sm">Clear</button>
      </div>
     </div><!-- Results Section -->
     <div id="results"></div><!-- Info Banner -->
     <div class="mt-8 bg-white rounded-2xl border border-slate-100 p-6 shadow-lg">
-     <div class="flex items-start gap-3">
-      <i data-lucide="info" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+     <div class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
       <div>
-       <p class="text-sm text-slate-700"><span class="font-semibold">Gnomio Details:</span> For comprehensive breakdowns of your scores, visit the Gnomio learning platform to see detailed activity scores, quiz results, and exam details.</p>
+       <p class="text-sm text-slate-700">For breakdowns of your scores, visit the Gnomio learning platform to see detailed activity scores, quiz results, and exam details.</p>
       </div>
      </div>
     </div>
@@ -85,7 +81,8 @@
     <div class="flex justify-between items-center mb-6">
      <h2 class="heading-font text-2xl font-bold text-slate-800">Grade Information</h2><button onclick="closeInfoModal()" class="text-slate-500 hover:text-slate-700"> <i data-lucide="x" class="w-6 h-6"></i> </button>
     </div><!-- Tabs -->
-    <div class="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto pb-2"><button class="tab-btn active" onclick="switchTab('computationtab')">Grade Computation</button> <button class="tab-btn inactive" onclick="switchTab('scaletab')">Grading Scale</button>
+    <div class="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto pb-2">
+     <button class="tab-btn active" onclick="switchTab('computationtab')">Grade Computation</button> <button class="tab-btn inactive" onclick="switchTab('scaletab')">Grading Scale</button>
     </div><!-- Tab: Grade Computation -->
     <div id="computationtab" class="tab-content active max-h-96 overflow-y-auto">
      <h3 class="heading-font text-lg font-bold text-slate-800 mb-4">Grade Components and Weights</h3>
@@ -459,6 +456,7 @@ const students = [
   {subject:"EnviSci3: Environmental Technology",section:"BSBio3C",studentNumber:"C202301973",name:"Zenarosa, Andrea F.",midterm:{studentship:8.4,activities:24.25,recitation:8,quizzes:19.13,exam:22.5,adjustment:1,average:83.28,grade:2.6},final:{studentship:8.75,activities:22.25,recitation:8,quizzes:21.28,exam:22.95,adjustment:1,average:84.23,grade:2.6},finalGradeAverage:84.23,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"}
 ];
 
+
 function getGradeColor(grade) {
   if (grade <= 1.5) return 'text-emerald-700 bg-emerald-50';
   if (grade <= 2.0) return 'text-teal-700 bg-teal-50';
@@ -710,5 +708,5 @@ window.elementSdk.init({
 
 lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9feb02d4e3effc92',t:'MTc3OTI3NjY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fee4c079265fec9',t:'MTc3OTMxMTEwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
