@@ -456,6 +456,7 @@ const students = [
   {subject:"EnviSci3: Environmental Technology",section:"BSBio3C",studentNumber:"C202301973",name:"Zenarosa, Andrea F.",midterm:{studentship:8.4,activities:24.25,recitation:8,quizzes:19.13,exam:22.5,adjustment:1,average:83.28,grade:2.6},final:{studentship:8.75,activities:22.25,recitation:8,quizzes:21.28,exam:22.95,adjustment:1,average:84.23,grade:2.6},finalGradeAverage:84.23,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"}
 ];
 
+
 function getGradeColor(grade) {
   if (grade <= 1.5) return 'text-emerald-700 bg-emerald-50';
   if (grade <= 2.0) return 'text-teal-700 bg-teal-50';
@@ -544,17 +545,19 @@ function handleSubmit() {
       resultsHTML += `
         <!-- Grade Summary -->
         <div class="grid grid-cols-3 gap-4 mb-6 slide-up-anim relative" style="animation-delay: 0.1s;">
-          <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-6 text-center">
-            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Final Average</p>
-            <p class="heading-font text-2xl font-bold text-emerald-700">${finalAvg}</p>
+          <div class="bg-white rounded-3xl border-2 border-slate-200 p-8 text-center shadow-md hover:shadow-lg transition-shadow card-hover">
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-3">Final Average</p>
+            <p class="heading-font text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">${finalAvg}</p>
           </div>
-          <div class="bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-2xl border-2 border-blue-400 p-6 text-center shadow-lg">
-            <p class="text-xs text-white uppercase tracking-wide font-bold mb-2 opacity-90">Grade Equivalent</p>
-            <p class="heading-font text-2xl font-bold text-white">${finalEquiv}</p>
+          <div class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-3xl border-0 p-8 text-center shadow-2xl card-hover relative overflow-hidden">
+            <div class="absolute inset-0 bg-white opacity-5"></div>
+            <p class="text-xs text-white uppercase tracking-wider font-bold mb-3 relative z-10 opacity-95">Grade Equivalent</p>
+            <p class="heading-font text-4xl font-bold text-white relative z-10">${finalEquiv}</p>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
           </div>
-          <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl border border-emerald-100 p-6 text-center">
-            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Status</p>
-            <p class="heading-font text-2xl font-bold text-emerald-700">Passed</p>
+          <div class="bg-white rounded-3xl border-2 border-slate-200 p-8 text-center shadow-md hover:shadow-lg transition-shadow card-hover">
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-3">Status</p>
+            <p class="heading-font text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Passed</p>
           </div>
         </div>
 
@@ -562,8 +565,8 @@ function handleSubmit() {
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-6 slide-up-anim relative" style="animation-delay: 0.2s;">
           <div class="flex justify-between items-start mb-6">
             <h3 class="heading-font text-lg font-bold text-slate-800">Grade Breakdown</h3>
-            <button onclick="openInfoModal('${student.section}')" class="text-slate-400 hover:text-emerald-600 transition" title="Grade Information">
-              <i data-lucide="info" class="w-6 h-6"></i>
+            <button onclick="openInfoModal('${student.section}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 p-2.5 rounded-full transition shadow-md hover:shadow-lg" title="Grade Information">
+              <i data-lucide="info" class="w-5 h-5"></i>
             </button>
           </div>
           
@@ -709,5 +712,5 @@ window.elementSdk.init({
 
 lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fee79a2b4c7fec9',t:'MTc3OTMxMjk2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fef28d02348fec9',t:'MTc3OTMyMDE0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
