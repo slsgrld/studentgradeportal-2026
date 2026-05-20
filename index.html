@@ -1,4 +1,317 @@
-{subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202406027",name:"Alegre, Michaella",midterm:{studentship:9.7,activities:19.8,recitation:14.1,quizzes:21,exam:25.2,average:89.8,grade:2},final:{studentship:9.7,activities:16.82,recitation:14.18,quizzes:22.19,exam:28.5,average:91.38,grade:1.9},finalGradeAverage:90.59,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Grade Portal</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Sora', sans-serif; }
+    .heading-font { font-family: 'Outfit', sans-serif; }
+    .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .dropdown-content.open { max-height: 600px; }
+    
+    @keyframes blob { 0%, 100% { transform: translate(0, 0) scale(1); } 25% { transform: translate(15px, -15px) scale(1.05); } 50% { transform: translate(-10px, 15px) scale(0.95); } 75% { transform: translate(-15px, -10px) scale(1.05); } }
+    @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.7); opacity: 0.5; } }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    
+    .loading-blob { animation: blob 4s infinite; }
+    .loading-dot { animation: pulse-dot 1s ease-in-out infinite; }
+    .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in-anim { animation: fade-in 0.6s ease-out; }
+    .slide-up-anim { animation: slide-up 0.8s ease-out; }
+    .float-up-anim { animation: float-up 0.6s ease-out; }
+    
+    .gradient-text { background: linear-gradient(135deg, #059669 0%, #0d9488 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-bg { background: linear-gradient(135deg, #f0fdf4 0%, #f0fdfa 100%); }
+    .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-4px); }
+    .tab-btn { padding: 0.5rem 1rem; font-size: 0.875rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; border: none; font-weight: 500; }
+    .tab-btn.active { background-color: #059669; color: white; }
+    .tab-btn.inactive { background-color: #e2e8f0; color: #64748b; }
+    .tab-btn:hover { opacity: 0.8; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .info-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; }
+    .info-modal.hidden { display: none; }
+    .info-modal-content { background: white; border-radius: 1.5rem; padding: 2rem; max-width: 600px; max-height: 80vh; overflow-y-auto; box-shadow: 0 20px 25px rgba(0,0,0,0.15); }
+    .table-container { overflow-x: auto; }
+    .grade-table { width: 100%; border-collapse: collapse; }
+    .grade-table th, .grade-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .grade-table th { background-color: #f1f5f9; font-weight: 600; color: #334155; }
+    .grade-table td { color: #475569; }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full gradient-bg overflow-auto">
+   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12">
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+     <h1 id="portalTitle" class="heading-font text-5xl md:text-5xl font-bold mb-3 gradient-text">Student Grade Portal</h1>
+     <p class="text-slate-600 text-lg">Check your academic performance and grades</p>
+    </div><!-- Search Card -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-8 fade-in-anim">
+     <label for="studentInput" class="block text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border-2 border-slate-200 rounded-xl px-5 py-4 text-slate-800 text-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition mb-6">
+     <div class="flex gap-3">
+      <button onclick="handleSubmit()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg">Search Records</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Clear</button>
+     </div>
+    </div><!-- Results Section -->
+    <div id="results"></div><!-- Info Banner -->
+    <div class="mt-8 bg-white rounded-2xl border border-slate-100 p-6 shadow-lg">
+     <div class="flex items-start gap-3">
+      <i data-lucide="info" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+      <div>
+       <p class="text-sm text-slate-700"><span class="font-semibold">Gnomio Details:</span> For comprehensive breakdowns of your scores, visit the Gnomio learning platform to see detailed activity scores, quiz results, and exam details.</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Footer -->
+   <footer class="bg-slate-800 text-slate-300 text-center py-6 mt-16 border-t border-slate-700">
+    <p class="text-sm">Developed by <span class="font-semibold text-white">Dr. Gerald M. Salas</span></p>
+   </footer>
+  </div><!-- Info Modal -->
+  <div id="infoModal" class="info-modal hidden">
+   <div class="info-modal-content">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="heading-font text-2xl font-bold text-slate-800">Grade Information</h2><button onclick="closeInfoModal()" class="text-slate-500 hover:text-slate-700"> <i data-lucide="x" class="w-6 h-6"></i> </button>
+    </div><!-- Tabs -->
+    <div class="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto pb-2"><button class="tab-btn active" onclick="switchTab('computationtab')">Grade Computation</button> <button class="tab-btn inactive" onclick="switchTab('scaletab')">Grading Scale</button>
+    </div><!-- Tab: Grade Computation -->
+    <div id="computationtab" class="tab-content active max-h-96 overflow-y-auto">
+     <h3 class="heading-font text-lg font-bold text-slate-800 mb-4">Grade Components and Weights</h3>
+     <div class="table-container mb-6">
+      <table class="grade-table text-sm">
+       <thead>
+        <tr>
+         <th>Component</th>
+         <th>EnviSci3</th>
+         <th>GE-Elect-MST</th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>Studentship</td>
+         <td>10%</td>
+         <td>10%</td>
+        </tr>
+        <tr>
+         <td>Activities</td>
+         <td>25%</td>
+         <td>20%</td>
+        </tr>
+        <tr>
+         <td>Recitation</td>
+         <td>10%</td>
+         <td>15%</td>
+        </tr>
+        <tr>
+         <td>Quizzes</td>
+         <td>25%</td>
+         <td>25%</td>
+        </tr>
+        <tr>
+         <td>Major Exam</td>
+         <td>30%</td>
+         <td>30%</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <h3 class="heading-font text-sm font-bold text-slate-800 mb-3">Computation Process</h3>
+     <div class="bg-slate-50 rounded-lg p-3 space-y-2 text-xs text-slate-700">
+      <p>• Each component is scored out of its maximum possible points.</p>
+      <p>• A weighted average is calculated for both Midterm and Final periods using the weights above.</p>
+      <p class="font-semibold mt-2">Final Grade Average = (Midterm Grade × 50%) + (Final Grade × 50%)</p>
+      <p>• The Final Grade Equivalent is determined using the official University Grading Scale.</p>
+     </div>
+    </div><!-- Tab: Grading Scale -->
+    <div id="scaletab" class="tab-content max-h-96 overflow-y-auto">
+     <h3 class="heading-font text-lg font-bold text-slate-800 mb-4">University Grading Scale</h3>
+     <div class="table-container">
+      <table class="grade-table text-xs">
+       <thead>
+        <tr>
+         <th>Average</th>
+         <th>Equivalent</th>
+         <th>Remarks</th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>100</td>
+         <td>1.00</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>99</td>
+         <td>1.10</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>98</td>
+         <td>1.20</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>97</td>
+         <td>1.30</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>96</td>
+         <td>1.40</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>95</td>
+         <td>1.50</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>94</td>
+         <td>1.60</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>93</td>
+         <td>1.70</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>92</td>
+         <td>1.80</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>91</td>
+         <td>1.90</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>90</td>
+         <td>2.00</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>89</td>
+         <td>2.10</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>88</td>
+         <td>2.20</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>87</td>
+         <td>2.30</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>86</td>
+         <td>2.40</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>85</td>
+         <td>2.50</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>84</td>
+         <td>2.60</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>83</td>
+         <td>2.60</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>82</td>
+         <td>2.70</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>81</td>
+         <td>2.70</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>80</td>
+         <td>2.80</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>79</td>
+         <td>2.80</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>78</td>
+         <td>2.90</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>77</td>
+         <td>2.90</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>76</td>
+         <td>3.00</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>75</td>
+         <td>3.00</td>
+         <td>Passed</td>
+        </tr>
+        <tr>
+         <td>74</td>
+         <td>4.00</td>
+         <td>Conditional</td>
+        </tr>
+        <tr>
+         <td>73</td>
+         <td>4.00</td>
+         <td>Conditional</td>
+        </tr>
+        <tr>
+         <td>72</td>
+         <td>5.00</td>
+         <td>Failed</td>
+        </tr>
+        <tr>
+         <td>71</td>
+         <td>5.00</td>
+         <td>Failed</td>
+        </tr>
+        <tr>
+         <td>70</td>
+         <td>5.00</td>
+         <td>Failed</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+// Student Data
+const students = [
+  {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202406027",name:"Alegre, Michaella",midterm:{studentship:9.7,activities:19.8,recitation:14.1,quizzes:21,exam:25.2,average:89.8,grade:2},final:{studentship:9.7,activities:16.82,recitation:14.18,quizzes:22.19,exam:28.5,average:91.38,grade:1.9},finalGradeAverage:90.59,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
   {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400036",name:"Almirañez, Trixie Nicole",midterm:{studentship:9.2,activities:19.6,recitation:14.1,quizzes:20.58,exam:24.6,average:88.08,grade:2.2},final:{studentship:9.7,activities:17.75,recitation:14.18,quizzes:22.88,exam:29.1,average:93.6,grade:1.6},finalGradeAverage:90.84,finalGradeEquivalent:1.9,interpretation:"Passed",remarks:"Passed"},
   {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202400114",name:"Balmeo, Angel Sharine",midterm:{studentship:9.7,activities:19.2,recitation:14.1,quizzes:21.08,exam:25.2,average:89.28,grade:2.1},final:{studentship:9.7,activities:17.83,recitation:14.18,quizzes:21.69,exam:27.3,average:90.69,grade:1.9},finalGradeAverage:89.99,finalGradeEquivalent:2,interpretation:"Passed",remarks:"Passed"},
   {subject:"GE-Elect-MST: Environmental Science",section:"BSBio2B",studentNumber:"C202401852",name:"Baluyut, Newler",midterm:{studentship:9.6,activities:18.4,recitation:13.8,quizzes:21.42,exam:25.5,average:88.72,grade:2.1},final:{studentship:9.6,activities:18.06,recitation:13.95,quizzes:18.56,exam:21.9,average:82.07,grade:2.7},finalGradeAverage:85.39,finalGradeEquivalent:2.5,interpretation:"Passed",remarks:"Passed"},
@@ -145,3 +458,257 @@
   {subject:"EnviSci3: Environmental Technology",section:"BSBio3C",studentNumber:"C202302067",name:"Vita, Jerilyn S.",midterm:{studentship:8.4,activities:24.25,recitation:8,quizzes:20.31,exam:24.6,adjustment:1,average:86.56,grade:2.4},final:{studentship:8.7,activities:23.25,recitation:8,quizzes:22.48,exam:26.1,adjustment:1,average:89.53,grade:2.1},finalGradeAverage:89.53,finalGradeEquivalent:2.2,interpretation:"Passed",remarks:"Passed"},
   {subject:"EnviSci3: Environmental Technology",section:"BSBio3C",studentNumber:"C202301973",name:"Zenarosa, Andrea F.",midterm:{studentship:8.4,activities:24.25,recitation:8,quizzes:19.13,exam:22.5,adjustment:1,average:83.28,grade:2.6},final:{studentship:8.75,activities:22.25,recitation:8,quizzes:21.28,exam:22.95,adjustment:1,average:84.23,grade:2.6},finalGradeAverage:84.23,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"}
 ];
+
+function getGradeColor(grade) {
+  if (grade <= 1.5) return 'text-emerald-700 bg-emerald-50';
+  if (grade <= 2.0) return 'text-teal-700 bg-teal-50';
+  if (grade <= 2.5) return 'text-blue-700 bg-blue-50';
+  return 'text-orange-700 bg-orange-50';
+}
+
+function handleSubmit() {
+  const input = document.getElementById('studentInput').value.trim().toLowerCase();
+  if (!input) return;
+  
+  const results = document.getElementById('results');
+  
+  // Modern loading page
+  results.innerHTML = `
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-12 mb-4 fade-in-anim text-center">
+      <div class="flex justify-center mb-8">
+        <div class="relative w-24 h-24">
+          <div class="absolute inset-0 bg-gradient-to-r from-emerald-200 to-teal-200 rounded-full loading-blob"></div>
+          <div class="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+            <div class="flex gap-2">
+              <div class="loading-dot w-2 h-2 bg-emerald-600 rounded-full"></div>
+              <div class="loading-dot w-2 h-2 bg-teal-600 rounded-full"></div>
+              <div class="loading-dot w-2 h-2 bg-emerald-600 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="heading-font text-2xl font-bold text-slate-800 mb-2">Searching Records</p>
+      <p class="text-slate-500">${input.toUpperCase()}</p>
+    </div>
+  `;
+  
+  setTimeout(() => {
+    const student = students.find(s => s.studentNumber.toLowerCase() === input);
+
+    if (!student) {
+      results.innerHTML = `<div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-red-700 text-center slide-up-anim"><div class="flex justify-center mb-3"><i data-lucide="alert-circle" class="w-8 h-8"></i></div><p class="heading-font text-lg font-bold mb-1">Not Found</p><p class="text-sm">Please check your Student Number and try again.</p></div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    const interpretation = student.interpretation;
+    const finalEquiv = student.finalGradeEquivalent;
+    const finalAvg = student.finalGradeAverage;
+
+    let resultsHTML = `
+      <!-- Student Info Card -->
+      <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-6 relative slide-up-anim" style="animation-delay: 0s;">
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="col-span-2">
+            <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-2">Student Information</p>
+            <h2 class="heading-font text-3xl font-bold text-slate-800 mb-1">${student.name}</h2>
+            <p class="text-slate-600 font-medium">${student.studentNumber.toUpperCase()}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-2">Section</p>
+            <p class="heading-font text-2xl font-bold text-emerald-600">${student.section}</p>
+          </div>
+        </div>
+        <div class="pt-6 border-t border-slate-100">
+          <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-2">Course</p>
+          <p class="text-slate-700 font-medium">${student.subject}</p>
+        </div>
+      </div>
+    `;
+
+    if (interpretation === "Incomplete") {
+      const remarkText = student.remarks.replace('Missing Submission ', '');
+      resultsHTML += `
+        <div class="bg-orange-50 border-2 border-orange-200 rounded-2xl p-8 mb-6 slide-up-anim" style="animation-delay: 0.1s;">
+          <div class="flex items-start gap-4">
+            <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-600 flex-shrink-0 mt-1"></i>
+            <div>
+              <h3 class="heading-font text-xl font-bold text-orange-900 mb-2">Incomplete (INC)</h3>
+              <p class="text-sm text-orange-800 mb-4">${remarkText}</p>
+              <div class="bg-white bg-opacity-60 rounded-lg p-3 text-sm text-orange-800 space-y-2">
+                <p><strong>📋 Note:</strong> Completion of grade will start after the term.</p>
+                <p><strong>⏱️ Deadline:</strong> You have one (1) year from term end to complete requirements. If not completed, your grade will become 5.0.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      resultsHTML += `
+        <!-- Grade Summary -->
+        <div class="grid grid-cols-3 gap-4 mb-6 slide-up-anim relative" style="animation-delay: 0.1s;">
+          <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-6 text-center">
+            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Final Average</p>
+            <p class="heading-font text-4xl font-bold text-emerald-700">${finalAvg}</p>
+          </div>
+          <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-6 text-center">
+            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Grade Equivalent</p>
+            <p class="heading-font text-4xl font-bold text-blue-700">${finalEquiv}</p>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl border border-emerald-100 p-6 text-center relative">
+            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Status</p>
+            <p class="heading-font text-3xl font-bold text-emerald-700">✓ Passed</p>
+            <button onclick="openInfoModal('${student.section}')" class="absolute top-3 right-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full w-7 h-7 flex items-center justify-center transition shadow-md">
+              <i data-lucide="info" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grades Detail -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-6 slide-up-anim" style="animation-delay: 0.2s;">
+          <h3 class="heading-font text-xl font-bold text-slate-800 mb-6">Grade Breakdown</h3>
+          
+          <div class="grid grid-cols-2 gap-8">
+            <!-- Midterm -->
+            <div>
+              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-4">Midterm Term</p>
+              <div class="space-y-3 mb-4">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600">Grade Equivalent</span>
+                  <span class="heading-font text-2xl font-bold text-slate-800">${student.midterm.grade}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600">Average Score</span>
+                  <span class="heading-font text-2xl font-bold text-emerald-600">${student.midterm.average}</span>
+                </div>
+              </div>
+              <button onclick="toggleDropdown('midtermDD')" class="w-full flex items-center justify-between text-sm font-bold text-emerald-600 hover:text-emerald-700 py-3 px-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition">
+                <span>View Details</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="midtermDD-icon"></i>
+              </button>
+              <div id="midtermDD" class="dropdown-content mt-3">
+                <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                  ${gradeRow('Studentship', student.midterm.studentship)}
+                  ${gradeRow('Activities', student.midterm.activities)}
+                  ${gradeRow('Recitation', student.midterm.recitation)}
+                  ${gradeRow('Quizzes', student.midterm.quizzes)}
+                  ${gradeRow('Exam', student.midterm.exam)}
+                  ${student.midterm.adjustment ? gradeRow('Adjustment', student.midterm.adjustment) : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Final Term -->
+            <div>
+              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-4">Final Term</p>
+              <div class="space-y-3 mb-4">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600">Grade Equivalent</span>
+                  <span class="heading-font text-2xl font-bold text-slate-800">${student.final.grade}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600">Average Score</span>
+                  <span class="heading-font text-2xl font-bold text-emerald-600">${student.final.average}</span>
+                </div>
+              </div>
+              <button onclick="toggleDropdown('finalDD')" class="w-full flex items-center justify-between text-sm font-bold text-emerald-600 hover:text-emerald-700 py-3 px-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition">
+                <span>View Details</span><i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="finalDD-icon"></i>
+              </button>
+              <div id="finalDD" class="dropdown-content mt-3">
+                <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                  ${gradeRow('Studentship', student.final.studentship)}
+                  ${gradeRow('Activities', student.final.activities)}
+                  ${gradeRow('Recitation', student.final.recitation)}
+                  ${gradeRow('Quizzes', student.final.quizzes)}
+                  ${gradeRow('Exam', student.final.exam)}
+                  ${student.final.adjustment ? gradeRow('Adjustment', student.final.adjustment) : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    results.innerHTML = resultsHTML;
+    lucide.createIcons();
+  }, 1800);
+}
+
+function gradeRow(label, value) {
+  return `<div class="flex justify-between"><span class="text-slate-600">${label}</span><span class="font-bold text-slate-800">${value}</span></div>`;
+}
+
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  el.classList.toggle('open');
+  icon.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+function switchTab(tabName) {
+  const computationtab = document.getElementById('computationtab');
+  const scaletab = document.getElementById('scaletab');
+  const tabs = document.querySelectorAll('.tab-btn');
+
+  computationtab.classList.remove('active');
+  scaletab.classList.remove('active');
+  tabs.forEach(t => t.classList.remove('active'));
+
+  if (tabName === 'computationtab') {
+    computationtab.classList.add('active');
+    tabs[0].classList.add('active');
+  } else if (tabName === 'scaletab') {
+    scaletab.classList.add('active');
+    tabs[1].classList.add('active');
+  }
+}
+
+function openInfoModal(section) {
+  const modal = document.getElementById('infoModal');
+  
+  document.getElementById('computationtab').classList.add('active');
+  document.getElementById('scaletab').classList.remove('active');
+  document.querySelectorAll('.tab-btn')[0].classList.add('active');
+  document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+  
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function closeInfoModal() {
+  document.getElementById('infoModal').classList.add('hidden');
+}
+
+function handleReset() {
+  document.getElementById('studentInput').value = '';
+  document.getElementById('results').innerHTML = '';
+}
+
+document.getElementById('studentInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+
+// Element SDK
+const defaultConfig = {
+  portal_title: "Student Grade Portal"
+};
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    const title = config.portal_title || defaultConfig.portal_title;
+    document.getElementById('portalTitle').textContent = title;
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [],
+    borderables: [],
+    fontEditable: undefined,
+    fontSizeable: undefined
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ["portal_title", config.portal_title || defaultConfig.portal_title]
+  ])
+});
+
+lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9feb02d4e3effc92',t:'MTc3OTI3NjY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
