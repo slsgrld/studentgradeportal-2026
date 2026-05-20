@@ -456,7 +456,6 @@ const students = [
   {subject:"EnviSci3: Environmental Technology",section:"BSBio3C",studentNumber:"C202301973",name:"Zenarosa, Andrea F.",midterm:{studentship:8.4,activities:24.25,recitation:8,quizzes:19.13,exam:22.5,adjustment:1,average:83.28,grade:2.6},final:{studentship:8.75,activities:22.25,recitation:8,quizzes:21.28,exam:22.95,adjustment:1,average:84.23,grade:2.6},finalGradeAverage:84.23,finalGradeEquivalent:2.6,interpretation:"Passed",remarks:"Passed"}
 ];
 
-
 function getGradeColor(grade) {
   if (grade <= 1.5) return 'text-emerald-700 bg-emerald-50';
   if (grade <= 2.0) return 'text-teal-700 bg-teal-50';
@@ -547,15 +546,15 @@ function handleSubmit() {
         <div class="grid grid-cols-3 gap-4 mb-6 slide-up-anim relative" style="animation-delay: 0.1s;">
           <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-6 text-center">
             <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Final Average</p>
-            <p class="heading-font text-3xl font-bold text-emerald-700">${finalAvg}</p>
+            <p class="heading-font text-2xl font-bold text-emerald-700">${finalAvg}</p>
           </div>
-          <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-6 text-center">
-            <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Grade Equivalent</p>
-            <p class="heading-font text-3xl font-bold text-blue-700">${finalEquiv}</p>
+          <div class="bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-2xl border-2 border-blue-400 p-6 text-center shadow-lg">
+            <p class="text-xs text-white uppercase tracking-wide font-bold mb-2 opacity-90">Grade Equivalent</p>
+            <p class="heading-font text-2xl font-bold text-white">${finalEquiv}</p>
           </div>
           <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl border border-emerald-100 p-6 text-center">
             <p class="text-xs text-slate-600 uppercase tracking-wide font-bold mb-2">Status</p>
-            <p class="heading-font text-2xl font-bold text-emerald-700">✓ Passed</p>
+            <p class="heading-font text-2xl font-bold text-emerald-700">Passed</p>
           </div>
         </div>
 
@@ -710,5 +709,5 @@ window.elementSdk.init({
 
 lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fee5c4b451efec9',t:'MTc3OTMxMTc2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fee79a2b4c7fec9',t:'MTc3OTMxMjk2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
