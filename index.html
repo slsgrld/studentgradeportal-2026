@@ -34,7 +34,7 @@
     .gradient-bg { background: linear-gradient(135deg, #f0fdf4 0%, #f0fdfa 100%); }
     .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .card-hover:hover { transform: translateY(-4px); }
-    .tab-btn { padding: 0.5rem 1rem; font-size: 0.875rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; border: none; font-weight: 500; }
+    .tab-btn { padding: 0.5rem 1rem; font-size: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; border: none; font-weight: 500; }
     .tab-btn.active { background-color: #059669; color: white; }
     .tab-btn.inactive { background-color: #e2e8f0; color: #64748b; }
     .tab-btn:hover { opacity: 0.8; }
@@ -54,22 +54,18 @@
  </head>
  <body class="h-full">
   <div id="app" class="h-full w-full gradient-bg overflow-auto">
-   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12">
-    <!-- Header Section -->
+   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12"><!-- Header Section -->
     <div class="text-center mb-12">
      <h1 id="portalTitle" class="heading-font text-4xl md:text-5xl font-bold mb-3 gradient-text">Student Grade Portal</h1>
      <p class="text-slate-600 text-base">Check your academic performance and grades</p>
     </div><!-- Search Card -->
-    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-8 fade-in-anim">
-     <label for="studentInput" class="block text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wide">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border-2 border-slate-200 rounded-xl px-5 py-3 text-slate-700 text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition mb-6">
-     <div class="flex gap-3">
-      <button onclick="handleSubmit()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-6 rounded-xl transition shadow-lg text-base">Search Records</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-6 rounded-xl transition text-base">Clear</button>
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-8 fade-in-anim"><label for="studentInput" class="block text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wide">Student Number</label> <input id="studentInput" type="text" placeholder="e.g. C2024XXXXX" class="w-full border-2 border-slate-200 rounded-xl px-5 py-3 text-slate-700 text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition mb-6">
+     <div class="flex gap-3"><button onclick="handleSubmit()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-6 rounded-xl transition shadow-lg text-base">Search Records</button> <button onclick="handleReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-6 rounded-xl transition text-base">Clear</button>
      </div>
     </div><!-- Results Section -->
     <div id="results"></div><!-- Info Banner -->
     <div class="mt-8 bg-white rounded-2xl border border-slate-100 p-6 shadow-lg">
-     <div class="flex items-start gap-3">
-      <i data-lucide="info" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+     <div class="flex items-start gap-3"><i data-lucide="info" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
       <div>
        <p class="text-sm text-slate-700">For breakdowns of your scores, visit the Gnomio learning platform to see detailed activity scores, quiz results, and exam details.</p>
       </div>
@@ -85,7 +81,8 @@
     <div class="flex justify-between items-center mb-6">
      <h2 class="heading-font text-2xl font-bold text-slate-800">Grade Information</h2><button onclick="closeInfoModal()" class="text-slate-500 hover:text-slate-700"> <i data-lucide="x" class="w-6 h-6"></i> </button>
     </div><!-- Tabs -->
-    <div class="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto pb-2"><button class="tab-btn active" onclick="switchTab('computationtab')">Computation</button> <button class="tab-btn inactive" onclick="switchTab('criteriatab')">Criteria</button> <button class="tab-btn inactive" onclick="switchTab('scaletab')">Scale</button>
+    <div class="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto pb-2">
+     <button class="tab-btn active" onclick="switchTab('computationtab')">Calculation</button> <button class="tab-btn inactive" onclick="switchTab('criteriatab')">Components</button> <button class="tab-btn inactive" onclick="switchTab('scaletab')">Scale</button>
     </div><!-- Tab: Grade Computation -->
     <div id="computationtab" class="tab-content active max-h-96 overflow-y-auto">
      <h3 class="heading-font text-lg font-bold text-slate-800 mb-4">Grade Components and Weights</h3>
@@ -94,248 +91,512 @@
        <thead>
         <tr>
          <th>Component</th>
-         <th>EnviSci3</th>
-         <th>GE-Elect-MST</th>
+         <th>Weight</th>
         </tr>
        </thead>
        <tbody>
         <tr>
          <td>Studentship</td>
          <td>10%</td>
-         <td>10%</td>
         </tr>
         <tr>
-         <td>Activities</td>
-         <td>25%</td>
-         <td>20%</td>
+         <td>Class Standing</td>
+         <td>60%</td>
         </tr>
         <tr>
-         <td>Recitation</td>
-         <td>10%</td>
-         <td>15%</td>
-        </tr>
-        <tr>
-         <td>Quizzes</td>
-         <td>25%</td>
-         <td>25%</td>
-        </tr>
-        <tr>
-         <td>Major Exam</td>
-         <td>30%</td>
+         <td>Major Examination</td>
          <td>30%</td>
         </tr>
        </tbody>
       </table>
      </div>
-     <h3 class="heading-font text-sm font-bold text-slate-800 mb-3">Computation Process</h3>
-     <div class="bg-slate-50 rounded-lg p-3 space-y-2 text-xs text-slate-700">
+     <h3 class="heading-font text-sm font-bold text-slate-800 mb-3">Grade Calculation Process</h3>
+     <div class="bg-slate-50 rounded-lg p-4 space-y-3 text-xs text-slate-700">
       <p>• Each component is scored out of its maximum possible points.</p>
       <p>• A weighted average is calculated for both Midterm and Final periods using the weights above.</p>
-      <p class="font-semibold mt-2">Final Grade Average = (Midterm Grade × 50%) + (Final Grade × 50%)</p>
+      <p class="font-semibold">Final Grade Average = (Midterm Grade × 50%) + (Final Grade × 50%)</p>
       <p>• The Final Grade Equivalent is determined using the official University Grading Scale.</p>
      </div>
     </div><!-- Tab: Grading Criteria -->
-    <div id="criteriatab" class="tab-content max-h-96 overflow-y-auto">
-     <div class="space-y-8">
-      <!-- GE-Elect-MST: Environmental Science -->
+    <div id="criteriatab" class="tab-content max-h-96 overflow-y-auto"><!-- Course Dropdown -->
+     <div class="mb-6"><label for="courseDrop" class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Select Course</label> <select id="courseDrop" onchange="switchCourseTab(this.value)" class="w-full border-2 border-slate-200 rounded-lg px-4 py-2 text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition bg-white cursor-pointer"> <option value="geelect">GE-Elect-MST: Environmental Science</option> <option value="envisci">EnviSci3: Environmental Technology</option> </select>
+     </div><!-- GE-Elect-MST Content -->
+     <div id="geoelectContent" class="space-y-6"><!-- MIDTERM -->
       <div>
-       <h3 class="heading-font text-lg font-bold text-emerald-700 mb-4 pb-2 border-b-2 border-emerald-200">GE-Elect-MST: Environmental Science</h3><!-- Midterm -->
-       <div class="mb-6">
-        <h4 class="heading-font text-sm font-bold text-slate-800 mb-3 text-emerald-600">MIDTERM</h4>
-        <div class="bg-emerald-50 rounded-lg p-4 space-y-4 text-xs">
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Class Standing – 70%</p>
-          <div class="space-y-3 ml-3">
-           <div>
-            <p class="font-semibold text-slate-700">1. Studentship – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Class Attendance</li>
-             <li>It2 – Class Participation</li>
-            </ul>
+       <h3 class="heading-font text-sm font-bold text-white bg-emerald-600 px-4 py-3 rounded-t-lg mb-0">MIDTERM TERM</h3>
+       <div class="bg-emerald-50 p-6 rounded-b-lg space-y-5"><!-- Studentship -->
+        <div class="border-l-4 border-emerald-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Studentship</h4><span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">10%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <thead>
+            <tr class="border-b border-emerald-200">
+             <th class="text-left py-2 px-2 text-emerald-700 font-bold">Component</th>
+             <th class="text-left py-2 px-2 text-emerald-700 font-bold">Description</th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr class="border-b border-emerald-100 hover:bg-emerald-100 transition">
+             <td class="py-2 px-2 text-slate-700">It1</td>
+             <td class="py-2 px-2 text-slate-600">Class Attendance</td>
+            </tr>
+            <tr class="hover:bg-emerald-100 transition">
+             <td class="py-2 px-2 text-slate-700">It2</td>
+             <td class="py-2 px-2 text-slate-600">Class Participation</td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+        </div><!-- Class Standing -->
+        <div class="border-l-4 border-emerald-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Class Standing</h4><span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">60%</span>
+         </div>
+         <div class="space-y-4 pl-4"><!-- Activity/Project -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-emerald-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Activity/Project – 20%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Activity 1: SDG Assessment Workshop</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Activity 1: SDG Submission Workshop</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">2. Activity/Project – 20%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Activity 1: SDG Assessment Workshop</li>
-             <li>It2 – Activity 1: SDG Submission Workshop</li>
-            </ul>
+          </div><!-- Recitation -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-emerald-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Recitation – 15%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Recitation</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">3. Recitation – 15%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Recitation</li>
-            </ul>
+          </div><!-- Quizzes -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-emerald-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Quizzes – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 1*</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 2*</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 3*</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">4. Quizzes – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Chapter 1*</li>
-             <li>It2 – Chapter 2*</li>
-             <li>It3 – Chapter 3*</li>
-            </ul>
-            <p class="text-slate-500 italic mt-2 ml-1">*Quizzes from chapter-based sections of Midterm Exam</p>
-           </div>
+           <p class="text-xs text-emerald-600 italic mt-2">*Quizzes from chapter-based sections of Midterm Exam</p>
           </div>
          </div>
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Major Examination – 30%</p>
-          <ul class="list-disc ml-4 text-slate-600 space-y-1">
-           <li>It1 – Midterm Exam</li>
-          </ul>
+        </div><!-- Major Examination -->
+        <div class="border-l-4 border-emerald-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Major Examination</h4><span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">30%</span>
          </div>
-        </div>
-       </div><!-- Final Term -->
-       <div class="mb-6">
-        <h4 class="heading-font text-sm font-bold text-slate-800 mb-3 text-emerald-600">FINAL TERM</h4>
-        <div class="bg-emerald-50 rounded-lg p-4 space-y-4 text-xs">
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Class Standing – 70%</p>
-          <div class="space-y-3 ml-3">
-           <div>
-            <p class="font-semibold text-slate-700">1. Studentship – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Class Attendance</li>
-             <li>It2 – Class Participation</li>
-            </ul>
-           </div>
-           <div>
-            <p class="font-semibold text-slate-700">2. Activity/Project – 20%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Activity 2: Upcycling</li>
-             <li>It2 – Documentation for Asynchronous Learning - Chapter 5</li>
-             <li>It3 – Documentation for Asynchronous Learning - Chapter 6</li>
-             <li>It4 – Documentation for MAPL Day</li>
-             <li>It5 – Discussion Forum on Chapter 4</li>
-            </ul>
-           </div>
-           <div>
-            <p class="font-semibold text-slate-700">3. Recitation – 15%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Final Term Practice Exam</li>
-             <li>It2 – Recitation </li>
-            </ul>
-           </div>
-           <div>
-            <p class="font-semibold text-slate-700">4. Quizzes – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Quiz on Chapter 5</li>
-             <li>It2 – Chapter 4*</li>
-             <li>It3 – Chapter 5*</li>
-             <li>It4 – Chapter 6*</li>
-            </ul>
-            <p class="text-slate-500 italic mt-2 ml-1">*Quizzes from chapter-based sections of Final Exam</p>
-           </div>
-          </div>
-         </div>
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Major Examination – 30%</p>
-          <ul class="list-disc ml-4 text-slate-600 space-y-1">
-           <li>It1 – Final Term Exam</li>
-          </ul>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <tbody>
+            <tr>
+             <td class="py-2 px-2 text-slate-700 font-semibold">It1</td>
+             <td class="py-2 px-2 text-slate-600">Midterm Exam</td>
+            </tr>
+           </tbody>
+          </table>
          </div>
         </div>
        </div>
-      </div><!-- EnviSci3: Environmental Technology -->
+      </div><!-- FINAL TERM -->
       <div>
-       <h3 class="heading-font text-lg font-bold text-teal-700 mb-4 pb-2 border-b-2 border-teal-200">EnviSci3: Environmental Technology</h3><!-- Midterm -->
-       <div class="mb-6">
-        <h4 class="heading-font text-sm font-bold text-slate-800 mb-3 text-teal-600">MIDTERM</h4>
-        <div class="bg-teal-50 rounded-lg p-4 space-y-4 text-xs">
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Class Standing – 70%</p>
-          <div class="space-y-3 ml-3">
-           <div>
-            <p class="font-semibold text-slate-700">1. Studentship – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Class Attendance</li>
-             <li>It2 – Class Participation</li>
-            </ul>
+       <h3 class="heading-font text-sm font-bold text-white bg-teal-600 px-4 py-3 rounded-t-lg mb-0">FINAL TERM</h3>
+       <div class="bg-teal-50 p-6 rounded-b-lg space-y-5"><!-- Studentship -->
+        <div class="border-l-4 border-teal-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Studentship</h4><span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">10%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <thead>
+            <tr class="border-b border-teal-200">
+             <th class="text-left py-2 px-2 text-teal-700 font-bold">Component</th>
+             <th class="text-left py-2 px-2 text-teal-700 font-bold">Description</th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr class="border-b border-teal-100 hover:bg-teal-100 transition">
+             <td class="py-2 px-2 text-slate-700">It1</td>
+             <td class="py-2 px-2 text-slate-600">Class Attendance</td>
+            </tr>
+            <tr class="hover:bg-teal-100 transition">
+             <td class="py-2 px-2 text-slate-700">It2</td>
+             <td class="py-2 px-2 text-slate-600">Class Participation</td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+        </div><!-- Class Standing -->
+        <div class="border-l-4 border-teal-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Class Standing</h4><span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">60%</span>
+         </div>
+         <div class="space-y-4 pl-4"><!-- Activity/Project -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-teal-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Activity/Project – 20%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Activity 2: Upcycling</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Documentation for Asynchronous Learning - Chapter 5</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Documentation for Asynchronous Learning - Chapter 6</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It4</td>
+               <td class="py-1 px-2 text-slate-600">Documentation for MAPL Day</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It5</td>
+               <td class="py-1 px-2 text-slate-600">Discussion Forum on Chapter 4</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">2. Activity/Project – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Activity 0-1: Water Quality Assessment</li>
-             <li>It2 – Activity 0-2: Air Quality Assessment</li>
-             <li>It3 – Activity 1: Mapping Tree Species*</li>
-             <li>It4 – Assignment 1: Reaction Paper on Wall-E</li>
-            </ul>
-            <p class="text-slate-500 italic mt-2 ml-1">*Activity not fully completed as planned; perfect score given</p>
+          </div><!-- Recitation -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-teal-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Recitation – 15%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Final Term Practice Exam</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Recitation Participation in Asynchronous Activities</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">3. Recitation – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Recitation</li>
-            </ul>
+          </div><!-- Quizzes -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-teal-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Quizzes – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Quiz on Chapter 5</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 4*</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 5*</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It4</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 6*</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">4. Quizzes – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Chapter 1**</li>
-             <li>It2 – Chapter 2**</li>
-             <li>It3 – Chapter 3**</li>
-             <li>It4 – Chapter 4**</li>
-            </ul>
-            <p class="text-slate-500 italic mt-2 ml-1">**Quizzes from chapter-based sections of Midterm Exam</p>
-           </div>
+           <p class="text-xs text-teal-600 italic mt-2">*Quizzes from chapter-based sections of Final Exam</p>
           </div>
          </div>
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Major Examination – 30%</p>
-          <ul class="list-disc ml-4 text-slate-600 space-y-1">
-           <li>It1 – Midterm Exam</li>
-          </ul>
+        </div><!-- Major Examination -->
+        <div class="border-l-4 border-teal-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Major Examination</h4><span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">30%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <tbody>
+            <tr>
+             <td class="py-2 px-2 text-slate-700 font-semibold">It1</td>
+             <td class="py-2 px-2 text-slate-600">Final Term Exam</td>
+            </tr>
+           </tbody>
+          </table>
          </div>
         </div>
-       </div><!-- Final Term -->
-       <div class="mb-6">
-        <h4 class="heading-font text-sm font-bold text-slate-800 mb-3 text-teal-600">FINAL TERM</h4>
-        <div class="bg-teal-50 rounded-lg p-4 space-y-4 text-xs">
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Class Standing – 70%</p>
-          <div class="space-y-3 ml-3">
-           <div>
-            <p class="font-semibold text-slate-700">1. Studentship – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Class Attendance</li>
-             <li>It2 – Class Participation</li>
-            </ul>
+       </div>
+      </div>
+     </div><!-- EnviSci3 Content -->
+     <div id="envisciContent" class="space-y-6 hidden"><!-- MIDTERM -->
+      <div>
+       <h3 class="heading-font text-sm font-bold text-white bg-cyan-600 px-4 py-3 rounded-t-lg mb-0">MIDTERM TERM</h3>
+       <div class="bg-cyan-50 p-6 rounded-b-lg space-y-5"><!-- Studentship -->
+        <div class="border-l-4 border-cyan-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Studentship</h4><span class="bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full">10%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <thead>
+            <tr class="border-b border-cyan-200">
+             <th class="text-left py-2 px-2 text-cyan-700 font-bold">Component</th>
+             <th class="text-left py-2 px-2 text-cyan-700 font-bold">Description</th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr class="border-b border-cyan-100 hover:bg-cyan-100 transition">
+             <td class="py-2 px-2 text-slate-700">It1</td>
+             <td class="py-2 px-2 text-slate-600">Class Attendance</td>
+            </tr>
+            <tr class="hover:bg-cyan-100 transition">
+             <td class="py-2 px-2 text-slate-700">It2</td>
+             <td class="py-2 px-2 text-slate-600">Class Participation</td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+        </div><!-- Class Standing -->
+        <div class="border-l-4 border-cyan-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Class Standing</h4><span class="bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full">60%</span>
+         </div>
+         <div class="space-y-4 pl-4"><!-- Activity/Project -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-cyan-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Activity/Project – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Activity 0-1: Water Quality Assessment</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Activity 0-2: Air Quality Assessment</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Activity 1: Mapping Tree Species*</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It4</td>
+               <td class="py-1 px-2 text-slate-600">Assignment 1: Reaction Paper on Wall-E</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">2. Activity/Project – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Activity 2: Upcycling</li>
-             <li>It2 – Activity 3: Renewable Energy Action Plan</li>
-             <li>It3 – Problem Solving Activity</li>
-            </ul>
+           <p class="text-xs text-cyan-600 italic mt-2">*Activity not fully completed as planned; perfect score given</p>
+          </div><!-- Recitation -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-cyan-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Recitation – 10%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Recitation</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">3. Recitation – 10%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Recitation</li>
-            </ul>
+          </div><!-- Quizzes -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-cyan-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Quizzes – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 1**</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 2**</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 3**</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It4</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 4**</td>
+              </tr>
+             </tbody>
+            </table>
            </div>
-           <div>
-            <p class="font-semibold text-slate-700">4. Quizzes – 25%</p>
-            <ul class="list-disc ml-4 text-slate-600 space-y-1 mt-1">
-             <li>It1 – Quiz on Chapter 5</li>
-             <li>It2 – Quiz on Chapter 7</li>
-             <li>It3 – Quiz on Chapter 8</li>
-             <li>It4 – Final Term Practice Examination</li>
-             <li>It5 – Chapter 5*</li>
-             <li>It6 – Chapter 6*</li>
-             <li>It7 – Chapter 7*</li>
-             <li>It8 – Chapter 8*</li>
-            </ul>
-            <p class="text-slate-500 italic mt-2 ml-1">*Quizzes from chapter-based sections of Final Exam</p>
-           </div>
+           <p class="text-xs text-cyan-600 italic mt-2">**Quizzes from chapter-based sections of Midterm Exam</p>
           </div>
          </div>
-         <div>
-          <p class="font-bold text-slate-800 mb-2">Major Examination – 30%</p>
-          <ul class="list-disc ml-4 text-slate-600 space-y-1">
-           <li>It1 – Final Exam Part 1</li>
-           <li>It2 – Final Exam Part 2</li>
-          </ul>
+        </div><!-- Major Examination -->
+        <div class="border-l-4 border-cyan-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Major Examination</h4><span class="bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full">30%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <tbody>
+            <tr>
+             <td class="py-2 px-2 text-slate-700 font-semibold">It1</td>
+             <td class="py-2 px-2 text-slate-600">Midterm Exam</td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+        </div>
+       </div>
+      </div><!-- FINAL TERM -->
+      <div>
+       <h3 class="heading-font text-sm font-bold text-white bg-blue-600 px-4 py-3 rounded-t-lg mb-0">FINAL TERM</h3>
+       <div class="bg-blue-50 p-6 rounded-b-lg space-y-5"><!-- Studentship -->
+        <div class="border-l-4 border-blue-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Studentship</h4><span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">10%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <thead>
+            <tr class="border-b border-blue-200">
+             <th class="text-left py-2 px-2 text-blue-700 font-bold">Component</th>
+             <th class="text-left py-2 px-2 text-blue-700 font-bold">Description</th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr class="border-b border-blue-100 hover:bg-blue-100 transition">
+             <td class="py-2 px-2 text-slate-700">It1</td>
+             <td class="py-2 px-2 text-slate-600">Class Attendance</td>
+            </tr>
+            <tr class="hover:bg-blue-100 transition">
+             <td class="py-2 px-2 text-slate-700">It2</td>
+             <td class="py-2 px-2 text-slate-600">Class Participation</td>
+            </tr>
+           </tbody>
+          </table>
+         </div>
+        </div><!-- Class Standing -->
+        <div class="border-l-4 border-blue-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Class Standing</h4><span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">60%</span>
+         </div>
+         <div class="space-y-4 pl-4"><!-- Activity/Project -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-blue-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Activity/Project – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Activity 2: Upcycling</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Activity 3: Renewable Energy Action Plan</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Problem Solving Activity</td>
+              </tr>
+             </tbody>
+            </table>
+           </div>
+          </div><!-- Recitation -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-blue-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Recitation – 10%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Recitation</td>
+              </tr>
+             </tbody>
+            </table>
+           </div>
+          </div><!-- Quizzes -->
+          <div class="bg-white rounded-lg p-3 border-l-3 border-blue-300">
+           <p class="text-xs font-bold text-slate-800 mb-2">Quizzes – 25%</p>
+           <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+             <tbody>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It1</td>
+               <td class="py-1 px-2 text-slate-600">Quiz on Chapter 5</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It2</td>
+               <td class="py-1 px-2 text-slate-600">Quiz on Chapter 7</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It3</td>
+               <td class="py-1 px-2 text-slate-600">Quiz on Chapter 8</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It4</td>
+               <td class="py-1 px-2 text-slate-600">Final Term Practice Examination</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It5</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 5*</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It6</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 6*</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+               <td class="py-1 px-2 text-slate-700 font-semibold">It7</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 7*</td>
+              </tr>
+              <tr>
+               <td class="py-1 px-2 text-slate-700 font-semibold">It8</td>
+               <td class="py-1 px-2 text-slate-600">Chapter 8*</td>
+              </tr>
+             </tbody>
+            </table>
+           </div>
+           <p class="text-xs text-blue-600 italic mt-2">*Quizzes from chapter-based sections of Final Exam</p>
+          </div>
+         </div>
+        </div><!-- Major Examination -->
+        <div class="border-l-4 border-blue-400">
+         <div class="flex justify-between items-start mb-3 pl-4">
+          <h4 class="heading-font text-sm font-bold text-slate-800">Major Examination</h4><span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">30%</span>
+         </div>
+         <div class="overflow-x-auto pl-4">
+          <table class="w-full text-xs">
+           <tbody>
+            <tr class="border-b border-slate-100">
+             <td class="py-2 px-2 text-slate-700 font-semibold">It1</td>
+             <td class="py-2 px-2 text-slate-600">Final Exam Part 1</td>
+            </tr>
+            <tr>
+             <td class="py-2 px-2 text-slate-700 font-semibold">It2</td>
+             <td class="py-2 px-2 text-slate-600">Final Exam Part 2</td>
+            </tr>
+           </tbody>
+          </table>
          </div>
         </div>
        </div>
@@ -775,8 +1036,8 @@ function handleSubmit() {
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 mb-6 slide-up-anim relative" style="animation-delay: 0.2s;">
           <div class="flex justify-between items-start mb-6">
             <h3 class="heading-font text-lg font-bold text-slate-800">Grade Breakdown</h3>
-            <button onclick="openInfoModal('${student.section}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 p-2.5 rounded-full transition shadow-md hover:shadow-lg" title="Grade Information">
-              <i data-lucide="info" class="w-5 h-5"></i>
+            <button onclick="openInfoModal('${student.section}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 p-2 rounded-full transition shadow-md hover:shadow-lg flex items-center justify-center" title="View grading criteria and computation details" style="width: 32px; height: 32px;">
+              <i data-lucide="info" class="w-4 h-4"></i>
             </button>
           </div>
           
@@ -862,16 +1123,35 @@ function switchTab(tabName) {
   const btns = document.querySelectorAll('.tab-btn');
   
   tabs.forEach(t => t.classList.remove('active'));
-  btns.forEach(b => b.classList.remove('active'));
+  btns.forEach(b => {
+    b.classList.remove('active');
+    b.classList.add('inactive');
+  });
   
   document.getElementById(tabName).classList.add('active');
   
   if (tabName === 'computationtab') {
     btns[0].classList.add('active');
+    btns[0].classList.remove('inactive');
   } else if (tabName === 'criteriatab') {
     btns[1].classList.add('active');
+    btns[1].classList.remove('inactive');
   } else if (tabName === 'scaletab') {
     btns[2].classList.add('active');
+    btns[2].classList.remove('inactive');
+  }
+}
+
+function switchCourseTab(courseValue) {
+  const geoelectDiv = document.getElementById('geoelectContent');
+  const envisciDiv = document.getElementById('envisciContent');
+  
+  if (courseValue === 'geelect') {
+    geoelectDiv.classList.remove('hidden');
+    envisciDiv.classList.add('hidden');
+  } else {
+    geoelectDiv.classList.add('hidden');
+    envisciDiv.classList.remove('hidden');
   }
 }
 
@@ -879,11 +1159,28 @@ function openInfoModal(section) {
   const modal = document.getElementById('infoModal');
   
   document.getElementById('computationtab').classList.add('active');
+  document.getElementById('criteriatab').classList.remove('active');
   document.getElementById('scaletab').classList.remove('active');
   document.querySelectorAll('.tab-btn')[0].classList.add('active');
   document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+  document.querySelectorAll('.tab-btn')[2].classList.remove('active');
   
   modal.classList.remove('hidden');
+  
+  // Show/hide criteria based on section
+  const geoelectSection = document.getElementById('geoelectContent');
+  const enviBioSection = document.getElementById('envisciContent');
+  
+  if (section === 'BSBio3C') {
+    enviBioSection.classList.remove('hidden');
+    geoelectSection.classList.add('hidden');
+    document.getElementById('courseDrop').value = 'envisci';
+  } else {
+    geoelectSection.classList.remove('hidden');
+    enviBioSection.classList.add('hidden');
+    document.getElementById('courseDrop').value = 'geelect';
+  }
+  
   lucide.createIcons();
 }
 
@@ -922,5 +1219,5 @@ window.elementSdk.init({
 
 lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fef89e99535fed9',t:'MTc3OTMyNDEyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fefc3cd669c0651',t:'MTc3OTMyNjQ5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
